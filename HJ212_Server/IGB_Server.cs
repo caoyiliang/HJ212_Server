@@ -33,5 +33,20 @@ namespace HJ212_Server
 
         /// <summary>C5提取实时数据间隔</summary>
         Task<int> GetRealTimeDataIntervalAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000);
+
+        /// <summary>C6设置实时数据间隔</summary>
+        Task SetRealTimeDataIntervalAsync(int clientId, string mn, string pw, ST st, int interval, int timeOut = 5000);
+
+        /// <summary>C7提取分钟数据间隔</summary>
+        Task<int> GetMinuteDataIntervalAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000);
+
+        /// <summary>C8设置分钟数据间隔</summary>
+        Task SetMinuteDataIntervalAsync(int clientId, string mn, string pw, ST st, int interval, int timeOut = 5000);
+
+        /// <summary>C9设置现场机访问密码</summary>
+        Task SetNewPWAsync(int clientId, string mn, string pw, ST st, string newPW, int timeOut = 5000);
+
+        /// <summary>C10取污染物实时数据</summary>
+        Task StartRealTimeDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000);
     }
 }

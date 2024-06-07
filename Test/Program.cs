@@ -33,8 +33,29 @@ async Task Gb_OnClientConnect(int clientId)
         #endregion
 
         #region c5
-        var interval = await gb.GetRealTimeDataIntervalAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源);
-        Console.WriteLine(interval);
+        //var interval = await gb.GetRealTimeDataIntervalAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源);
+        //Console.WriteLine(interval);
+        #endregion
+
+        #region c6
+        //await gb.SetRealTimeDataIntervalAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, 10);
+        #endregion
+
+        #region c7
+        //var minInterval = await gb.GetMinuteDataIntervalAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源);
+        //Console.WriteLine(minInterval);
+        #endregion
+
+        #region c8
+        //await gb.SetMinuteDataIntervalAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, 20);
+        #endregion
+
+        #region c9
+        //await gb.SetNewPWAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "123456");
+        #endregion
+
+        #region c10
+        await gb.StartRealTimeDataAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源);
         #endregion
     }
     catch (TimeoutException ex)

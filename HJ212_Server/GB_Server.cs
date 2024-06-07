@@ -112,8 +112,44 @@ namespace HJ212_Server
         #region c5
         public async Task<int> GetRealTimeDataIntervalAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
         {
-            var rs = await _condorPort.RequestAsync<GetRealTimeDataIntervalReq, CN9011Rsp, GetRealTimeDataIntervalRsp, CN9012Rsp>(clientId, new GetRealTimeDataIntervalReq(mn, pw, st), timeOut);
+            var rs = await _condorPort.RequestAsync<GetReq, CN9011Rsp, GetRealTimeDataIntervalRsp, CN9012Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.提取实时数据间隔), timeOut);
             return rs.Rsp2.ToList()[0].GetResult().RtdInterval;
+        }
+        #endregion
+
+        #region c6
+        public async Task SetRealTimeDataIntervalAsync(int clientId, string mn, string pw, ST st, int interval, int timeOut = 5000)
+        {
+            await _condorPort.RequestAsync<SetRealTimeDataIntervalReq, CN9011Rsp, CN9012Rsp>(clientId, new SetRealTimeDataIntervalReq(mn, pw, st, interval), timeOut);
+        }
+        #endregion
+
+        #region c7
+        public async Task<int> GetMinuteDataIntervalAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
+        {
+            var rs = await _condorPort.RequestAsync<GetReq, CN9011Rsp, GetMinuteDataIntervalRsp, CN9012Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.提取分钟数据间隔), timeOut);
+            return rs.Rsp2.ToList()[0].GetResult().MinInterval;
+        }
+        #endregion
+
+        #region c8
+        public async Task SetMinuteDataIntervalAsync(int clientId, string mn, string pw, ST st, int interval, int timeOut = 5000)
+        {
+            await _condorPort.RequestAsync<SetMinuteDataIntervalReq, CN9011Rsp, CN9012Rsp>(clientId, new SetMinuteDataIntervalReq(mn, pw, st, interval), timeOut);
+        }
+        #endregion
+
+        #region c9
+        public async Task SetNewPWAsync(int clientId, string mn, string pw, ST st, string newPW, int timeOut = 5000)
+        {
+            await _condorPort.RequestAsync<SetNewPWReq, CN9011Rsp, CN9012Rsp>(clientId, new SetNewPWReq(mn, pw, st, newPW), timeOut);
+        }
+        #endregion
+
+        #region c10
+        public async Task StartRealTimeDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
+        {
+            await _condorPort.RequestAsync<GetReq, CN9011Rsp, CN9012Rsp>(clientId, new GetReq(mn, pw, st,CN_Server.取污染物实时数据), timeOut);
         }
         #endregion
     }
