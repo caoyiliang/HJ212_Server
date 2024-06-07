@@ -29,7 +29,7 @@ namespace HJ212_Server
         Task SetSystemTimeAsync(int clientId, string mn, string pw, ST st, string polId, DateTime systemTime, int timeOut = 5000);
 
         /// <summary>C4现场机时间校准请求</summary>
-        event ActivelyPushDataServerEventHandler<(string PolId, RspInfo RspInfo)>? OnAskSetSystemTime;
+        event ActivelyPushDataServerEventHandler<(string PolId, RspInfo RspInfo)> OnAskSetSystemTime;
 
         /// <summary>C5提取实时数据间隔</summary>
         Task<int> GetRealTimeDataIntervalAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000);
@@ -48,5 +48,20 @@ namespace HJ212_Server
 
         /// <summary>C10取污染物实时数据</summary>
         Task StartRealTimeDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000);
+
+        /// <summary>C11停止察看污染物实时数据</summary>
+        Task StopRealTimeDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000);
+
+        /// <summary>C12取设备运行状态数据</summary>
+        Task StartRunningStateDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000);
+
+        /// <summary>C13停止察看设备运行状态</summary>
+        Task StopRunningStateDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000);
+
+        /// <summary>
+        /// C14上传污染物实时数据
+        /// (C29上传工况实时数据 同)
+        /// </summary>
+        event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<RealTimeData> data, RspInfo RspInfo)> OnUploadRealTimeData;
     }
 }

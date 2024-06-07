@@ -28,6 +28,7 @@ namespace HJ212_Server
         public event RespondedLogServerEventHandler? OnReceivedData { add => _condorPort.OnReceivedData += value; remove => _condorPort.OnReceivedData -= value; }
 
         public event ActivelyPushDataServerEventHandler<(string PolId, RspInfo RspInfo)>? OnAskSetSystemTime;
+        public event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<RealTimeData> data, RspInfo RspInfo)>? OnUploadRealTimeData;
 
         public GB_Server(IPhysicalPort_Server physicalPort_Server, Version version = Version.HJT212_2017)
         {
@@ -76,6 +77,12 @@ namespace HJ212_Server
         {
             var brs = Encoding.ASCII.GetBytes(rs);
             return $"##{rs.Length.ToString().PadLeft(4, '0')}{rs}{StringByteUtils.BytesToString(CRC.GBcrc16(brs, brs.Length)).Replace(" ", "")}\r\n";
+        }
+
+        internal static bool NeedReturn(int? number)
+        {
+            if (number is null) return true;
+            return (number & 1) == 1;
         }
 
         #region c1
@@ -149,7 +156,38 @@ namespace HJ212_Server
         #region c10
         public async Task StartRealTimeDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
         {
-            await _condorPort.RequestAsync<GetReq, CN9011Rsp, CN9012Rsp>(clientId, new GetReq(mn, pw, st,CN_Server.取污染物实时数据), timeOut);
+            await _condorPort.RequestAsync<GetReq, CN9011Rsp, CN9012Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.取污染物实时数据), timeOut);
+        }
+        #endregion
+
+        #region c11
+        public async Task StopRealTimeDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
+        {
+            await _condorPort.RequestAsync<GetReq, CN9013Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.停止察看污染物实时数据), timeOut);
+        }
+        #endregion
+
+        #region c12
+        public async Task StartRunningStateDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
+        {
+            await _condorPort.RequestAsync<GetReq, CN9011Rsp, CN9012Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.取设备运行状态数据), timeOut);
+        }
+        #endregion
+
+        #region c13
+        public async Task StopRunningStateDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
+        {
+            await _condorPort.RequestAsync<GetReq, CN9013Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.停止察看设备运行状态), timeOut);
+        }
+        #endregion
+
+        #region c14
+        private async Task UploadRealTimeDataRspEvent(int clientId, (DateTime dataTime, List<RealTimeData> data, RspInfo RspInfo) rs)
+        {
+            if (!(rs.RspInfo.Flag.HasValue && !NeedReturn(rs.RspInfo.Flag)))
+                await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+            if (OnUploadRealTimeData is not null)
+                await OnUploadRealTimeData.Invoke(clientId, rs);
         }
         #endregion
     }

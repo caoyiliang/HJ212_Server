@@ -7,6 +7,12 @@ IGB_Server gb = new GB_Server(new TcpServer("0.0.0.0", 2756));
 gb.OnClientConnect += Gb_OnClientConnect;
 
 gb.OnAskSetSystemTime += Gb_OnAskSetSystemTime;
+gb.OnUploadRealTimeData += Gb_OnUploadRealTimeData;
+
+async Task Gb_OnUploadRealTimeData(int clientId, (DateTime dataTime, List<HJ212_Server.Model.RealTimeData> data, HJ212_Server.Model.RspInfo RspInfo) objects)
+{
+    await Task.CompletedTask;
+}
 
 async Task Gb_OnAskSetSystemTime(int clientId, (string PolId, HJ212_Server.Model.RspInfo RspInfo) objects)
 {
@@ -55,7 +61,19 @@ async Task Gb_OnClientConnect(int clientId)
         #endregion
 
         #region c10
-        await gb.StartRealTimeDataAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源);
+        //await gb.StartRealTimeDataAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源);
+        #endregion
+
+        #region c11
+        //await gb.StopRealTimeDataAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源);
+        #endregion
+
+        #region c12
+        //await gb.StartRunningStateDataAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源);
+        #endregion
+
+        #region c13
+        //await gb.StopRunningStateDataAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源);
         #endregion
     }
     catch (TimeoutException ex)

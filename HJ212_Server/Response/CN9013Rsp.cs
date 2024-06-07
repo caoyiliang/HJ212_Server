@@ -4,9 +4,8 @@ using TopPortLib.Interfaces;
 
 namespace HJ212_Server.Response
 {
-    internal class AskSetSystemTimeRsp : IAsyncResponse_Server<(string PolId, RspInfo RspInfo)>
+    internal class CN9013Rsp : IAsyncResponse_Server<RspInfo>
     {
-        private string _polId = null!;
         private readonly RspInfo _rspInfo = new();
         public async Task AnalyticalData(string clientInfo, byte[] bytes)
         {
@@ -21,20 +20,19 @@ namespace HJ212_Server.Response
             {
                 _rspInfo.Flag = flag;
             }
-            var dataList = data[1].Split([";", ",", "&&"], StringSplitOptions.RemoveEmptyEntries).Where(item => item.Contains('='));
-            _polId = dataList.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1] ?? throw new ArgumentException($"GB_Server:{clientInfo} HJ212 AskSetSystemTime PolId Error");
             await Task.CompletedTask;
         }
 
         public (bool Type, byte[]? CheckBytes) Check(string clientInfo, byte[] bytes)
         {
             var rs = Encoding.ASCII.GetString(bytes).Split(';');
-            return (rs.Where(item => item.Contains($"CN={(int)CN_Client.现场机时间校准请求}")).Any(), default);
+            var qn = rs.SingleOrDefault(item => item.Contains("QN"))?.Split('=')[1];
+            return (rs.Where(item => item.Contains($"CN={(int)CN_Client.通知应答}")).Any(), qn == null ? default : Encoding.ASCII.GetBytes(qn));
         }
 
-        public (string PolId, RspInfo RspInfo) GetResult()
+        public RspInfo GetResult()
         {
-            return (_polId, _rspInfo);
+            return _rspInfo;
         }
     }
 }

@@ -12,13 +12,19 @@ namespace HJ212_Server.Response
         public async Task AnalyticalData(string clientInfo, byte[] bytes)
         {
             var str = Encoding.ASCII.GetString(bytes.Skip(6).ToArray());
-            var datalist = str.Split([";", ",", "&&"], StringSplitOptions.RemoveEmptyEntries).Where(item => item.Contains('=') && !item.Contains("CP"));
-            _rspInfo.QN = datalist.FirstOrDefault(item => item.Contains("QN"));
-            _rspInfo.ST = datalist.FirstOrDefault(item => item.Contains("ST"));
-            _rspInfo.PW = datalist.FirstOrDefault(item => item.Contains("PW"));
-            _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
-            _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1] ?? throw new ArgumentException($"GB_Server:{clientInfo} HJ212 GetSystemTime PolId Error");
-            if (!DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("SystemTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _systemTime))
+            var data = str.Split("CP=&&");
+            var dataInfo = data[0].Split([";", ",", "&&"], StringSplitOptions.RemoveEmptyEntries);
+            _rspInfo.QN = dataInfo.FirstOrDefault(item => item.Contains("QN"));
+            _rspInfo.ST = dataInfo.FirstOrDefault(item => item.Contains("ST"));
+            _rspInfo.PW = dataInfo.FirstOrDefault(item => item.Contains("PW"));
+            _rspInfo.MN = dataInfo.FirstOrDefault(item => item.Contains("MN"));
+            if (int.TryParse(dataInfo.FirstOrDefault(item => item.Contains("Flag"))?.Split('=')[1], out var flag))
+            {
+                _rspInfo.Flag = flag;
+            }
+            var dataList = data[1].Split([";", ",", "&&"], StringSplitOptions.RemoveEmptyEntries).Where(item => item.Contains('='));
+            _polId = dataList.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1] ?? throw new ArgumentException($"GB_Server:{clientInfo} HJ212 GetSystemTime PolId Error");
+            if (!DateTime.TryParseExact(dataList.SingleOrDefault(item => item.Contains("SystemTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _systemTime))
             {
                 throw new ArgumentException($"GB_Server HJ212 GetSystemTime SystemTime Error");
             }
