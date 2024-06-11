@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Communication.Bus;
 using HJ212_Server;
+using HJ212_Server.Model;
 
 Console.WriteLine("Hello, World!");
 IGB_Server gb = new GB_Server(new TcpServer("0.0.0.0", 2756));
@@ -8,6 +9,36 @@ gb.OnClientConnect += Gb_OnClientConnect;
 
 gb.OnAskSetSystemTime += Gb_OnAskSetSystemTime;
 gb.OnUploadRealTimeData += Gb_OnUploadRealTimeData;
+gb.OnUploadRunningStateData += Gb_OnUploadRunningStateData;
+gb.OnUploadMinuteData += Gb_OnUploadMinuteData;
+gb.OnUploadHourData += Gb_OnUploadHourData;
+gb.OnUploadDayData += Gb_OnUploadDayData;
+gb.OnUploadRunningTimeData += Gb_OnUploadRunningTimeData;
+
+async Task Gb_OnUploadRunningTimeData(int clientId, (DateTime dataTime, List<RunningTimeData> data, RspInfo RspInfo) objects)
+{
+    await Task.CompletedTask;
+}
+
+async Task Gb_OnUploadDayData(int clientId, (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) objects)
+{
+    await Task.CompletedTask;
+}
+
+async Task Gb_OnUploadHourData(int clientId, (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) objects)
+{
+    await Task.CompletedTask;
+}
+
+async Task Gb_OnUploadMinuteData(int clientId, (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) objects)
+{
+    await Task.CompletedTask;
+}
+
+async Task Gb_OnUploadRunningStateData(int clientId, (DateTime dataTime, List<RunningStateData> data, RspInfo RspInfo) objects)
+{
+    await Task.CompletedTask;
+}
 
 async Task Gb_OnUploadRealTimeData(int clientId, (DateTime dataTime, List<HJ212_Server.Model.RealTimeData> data, HJ212_Server.Model.RspInfo RspInfo) objects)
 {
@@ -74,6 +105,18 @@ async Task Gb_OnClientConnect(int clientId)
 
         #region c13
         //await gb.StopRunningStateDataAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源);
+        #endregion
+
+        #region c20
+        var rs = await gb.GetMinuteDataAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, DateTime.Now.AddDays(5), DateTime.Now);
+        foreach (var item in rs)
+        {
+            Console.WriteLine(item.DataTime);
+            foreach (var data in item.Data)
+            {
+                Console.WriteLine($"Name:{data.Name}{(data.Cou is null ? "" : $" Cou:{data.Cou}")}{(data.Min is null ? "" : $" Min:{data.Min}")}{(data.Avg is null ? "" : $" Avg:{data.Avg}")}{(data.Max is null ? "" : $" Max:{data.Max}")}{(data.Flag is null ? "" : $" Flag:{data.Flag}")}");
+            }
+        }
         #endregion
     }
     catch (TimeoutException ex)

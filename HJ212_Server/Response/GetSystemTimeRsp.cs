@@ -47,5 +47,10 @@ namespace HJ212_Server.Response
         {
             return await Task.FromResult(true);
         }
+
+        public bool NeedCheck()
+        {
+            return true;
+        }
     }
 }

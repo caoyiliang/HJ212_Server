@@ -63,5 +63,26 @@ namespace HJ212_Server
         /// (C29上传工况实时数据 同)
         /// </summary>
         event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<RealTimeData> data, RspInfo RspInfo)> OnUploadRealTimeData;
+
+        /// <summary>C15上传设备运行状态数据</summary>
+        event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<RunningStateData> data, RspInfo RspInfo)> OnUploadRunningStateData;
+
+        /// <summary>C16上传污染物分钟数据</summary>
+        event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)> OnUploadMinuteData;
+
+        /// <summary>C17上传污染物小时数据</summary>
+        event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)> OnUploadHourData;
+
+        /// <summary>C18上传污染物日历史数据</summary>
+        event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)> OnUploadDayData;
+
+        /// <summary>C19上传设备运行时间日历史数据</summary>
+        event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<RunningTimeData> data, RspInfo RspInfo)> OnUploadRunningTimeData;
+
+        /// <summary>
+        /// C20取污染物分钟历史数据
+        /// 遵循C47-C50的规则
+        /// </summary>
+        Task<List<HistoryData>> GetMinuteDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000);
     }
 }
