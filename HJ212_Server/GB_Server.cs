@@ -5,7 +5,6 @@ using HJ212_Server.Request;
 using HJ212_Server.Response;
 using LogInterface;
 using Parser.Parsers;
-using System.Collections.Generic;
 using System.Text;
 using TopPortLib;
 using TopPortLib.Interfaces;
@@ -35,6 +34,8 @@ namespace HJ212_Server
         public event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)>? OnUploadHourData;
         public event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)>? OnUploadDayData;
         public event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<RunningTimeData> data, RspInfo RspInfo)>? OnUploadRunningTimeData;
+        public event ActivelyPushDataServerEventHandler<(DateTime dataTime, DateTime restartTime, RspInfo RspInfo)>? OnUploadAcquisitionDeviceRestartTime;
+        public event ActivelyPushDataServerEventHandler<(DateTime dataTime, float noiseLevel, RspInfo RspInfo)>? OnUploadRealTimeNoiseLevel;
 
         public GB_Server(IPhysicalPort_Server physicalPort_Server, Version version = Version.HJT212_2017)
         {
@@ -54,13 +55,12 @@ namespace HJ212_Server
 
         private async Task CondorPort_OnReceivedData(int clientId, byte[] data)
         {
-            var a = $"GB_Server {await GetClientInfos(clientId)} Rec:<-- {Encoding.UTF8.GetString(data)}";
-            _logger.Trace(a);
+            _logger.Trace($"GB_Server {await GetClientInfos(clientId)} Rec:<-- {Encoding.UTF8.GetString(data)}\n{StringByteUtils.BytesToString(data)}");
         }
 
         private async Task CondorPort_OnSentData(int clientId, byte[] data)
         {
-            _logger.Trace($"GB_Server {await GetClientInfos(clientId)} Send:--> {StringByteUtils.BytesToString(data)}");
+            _logger.Trace($"GB_Server {await GetClientInfos(clientId)} Send:--> {Encoding.UTF8.GetString(data)}");
         }
 
         internal async Task<string?> GetClientInfos(int clientId)
@@ -188,13 +188,18 @@ namespace HJ212_Server
         }
         #endregion
 
-        #region c14
+        #region c14、c25
         private async Task UploadRealTimeDataRspEvent(int clientId, (DateTime dataTime, List<RealTimeData> data, RspInfo RspInfo) rs)
         {
             if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
                 await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
-            if (OnUploadRealTimeData is not null)
-                await OnUploadRealTimeData.Invoke(clientId, rs);
+            var rtd = rs.data.Find(_ => _.Name == "LA");
+            if (OnUploadRealTimeNoiseLevel is not null && rtd is not null)
+            {
+                if (float.TryParse(rtd.Rtd, out var la))
+                    await OnUploadRealTimeNoiseLevel.Invoke(clientId, (rs.dataTime, la, rs.RspInfo));
+            }
+            else if (OnUploadRealTimeData is not null) await OnUploadRealTimeData.Invoke(clientId, rs);
         }
         #endregion
 
@@ -251,7 +256,7 @@ namespace HJ212_Server
         #region c20
         public async Task<List<HistoryData>> GetMinuteDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000)
         {
-            var reqRs = await _condorPort.RequestAsync<GetMinuteDataReq, CN9011Rsp, UploadMinuteDataRsp, CN9012Rsp>(clientId, new GetMinuteDataReq(mn, pw, st, beginTime, endTime), timeOut);
+            var reqRs = await _condorPort.RequestAsync<GetStatisticsDataReq, CN9011Rsp, UploadMinuteDataRsp, CN9012Rsp>(clientId, new GetStatisticsDataReq(mn, pw, st, CN_Server.取污染物分钟数据, beginTime, endTime), timeOut);
             var rs = new List<HistoryData>();
             foreach (var item in reqRs.Rsp2)
             {
@@ -259,6 +264,58 @@ namespace HJ212_Server
                 rs.Add(new(itemRs.dataTime, itemRs.data));
             }
             return rs;
+        }
+        #endregion
+
+        #region c21
+        public async Task<List<HistoryData>> GetHourDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000)
+        {
+            var reqRs = await _condorPort.RequestAsync<GetStatisticsDataReq, CN9011Rsp, UploadHourDataRsp, CN9012Rsp>(clientId, new GetStatisticsDataReq(mn, pw, st, CN_Server.取污染物小时数据, beginTime, endTime), timeOut);
+            var rs = new List<HistoryData>();
+            foreach (var item in reqRs.Rsp2)
+            {
+                var itemRs = item.GetResult();
+                rs.Add(new(itemRs.dataTime, itemRs.data));
+            }
+            return rs;
+        }
+        #endregion
+
+        #region c22
+        public async Task<List<HistoryData>> GetDayDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000)
+        {
+            var reqRs = await _condorPort.RequestAsync<GetStatisticsDataReq, CN9011Rsp, UploadDayDataRsp, CN9012Rsp>(clientId, new GetStatisticsDataReq(mn, pw, st, CN_Server.取污染物日历史数据, beginTime, endTime), timeOut);
+            var rs = new List<HistoryData>();
+            foreach (var item in reqRs.Rsp2)
+            {
+                var itemRs = item.GetResult();
+                rs.Add(new(itemRs.dataTime, itemRs.data));
+            }
+            return rs;
+        }
+        #endregion
+
+        #region c23
+        public async Task<List<RunningTimeHistory>> GetRunningTimeDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000)
+        {
+            var reqRs = await _condorPort.RequestAsync<GetRunningTimeDataReq, CN9011Rsp, UploadRunningTimeDataRsp, CN9012Rsp>(clientId, new GetRunningTimeDataReq(mn, pw, st, beginTime, endTime), timeOut);
+            var rs = new List<RunningTimeHistory>();
+            foreach (var item in reqRs.Rsp2)
+            {
+                var itemRs = item.GetResult();
+                rs.Add(new(itemRs.dataTime, itemRs.data));
+            }
+            return rs;
+        }
+        #endregion
+
+        #region c24
+        private async Task UploadAcquisitionDeviceRestartTimeRspEvent(int clientId, (DateTime dataTime, DateTime restartTime, RspInfo RspInfo) rs)
+        {
+            if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+            if (OnUploadAcquisitionDeviceRestartTime is not null)
+                await OnUploadAcquisitionDeviceRestartTime.Invoke(clientId, rs);
         }
         #endregion
     }

@@ -4,11 +4,13 @@ using TopPortLib.Interfaces;
 
 namespace HJ212_Server.Response
 {
-    internal class UploadDayDataRsp : IAsyncResponse_Server<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)>
+    internal class UploadDayDataRsp : IAsyncResponse_Server<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)>, IRspEnumerable
     {
         private DateTime _dataTime;
         private List<StatisticsData> _data = [];
         private readonly RspInfo _rspInfo = new();
+        private int? PNUM;
+        private int? PNO;
         public async Task AnalyticalData(string clientInfo, byte[] bytes)
         {
             var str = Encoding.ASCII.GetString(bytes.Skip(6).ToArray());
@@ -21,6 +23,14 @@ namespace HJ212_Server.Response
             if (int.TryParse(dataInfo.FirstOrDefault(item => item.Contains("Flag"))?.Split('=')[1], out var flag))
             {
                 _rspInfo.Flag = flag;
+            }
+            if (int.TryParse(dataInfo.FirstOrDefault(item => item.Contains("PNUM"))?.Split('=')[1], out var pnum))
+            {
+                PNUM = pnum;
+            }
+            if (int.TryParse(dataInfo.FirstOrDefault(item => item.Contains("PNO"))?.Split('=')[1], out var pno))
+            {
+                PNO = pno;
             }
             var dataList = data[1].Split([";", "&&"], StringSplitOptions.RemoveEmptyEntries).Where(item => item.Contains('='));
             if (!DateTime.TryParseExact(dataList.SingleOrDefault(item => item.Contains("DataTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _dataTime))
@@ -54,6 +64,13 @@ namespace HJ212_Server.Response
         public (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) GetResult()
         {
             return (_dataTime, _data, _rspInfo);
+        }
+
+        public async Task<bool> IsFinish() => await Task.FromResult(PNUM == null || PNO == null || PNO == PNUM);
+
+        public bool NeedCheck()
+        {
+            return false;
         }
     }
 }

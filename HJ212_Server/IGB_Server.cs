@@ -84,5 +84,29 @@ namespace HJ212_Server
         /// 遵循C47-C50的规则
         /// </summary>
         Task<List<HistoryData>> GetMinuteDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000);
+
+        /// <summary>
+        /// C21取污染物小时历史数据
+        /// 遵循C47-C50的规则
+        /// </summary>
+        Task<List<HistoryData>> GetHourDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000);
+
+        /// <summary>
+        /// C22取污染物日历史数据
+        /// 遵循C47-C50的规则
+        /// </summary>
+        Task<List<HistoryData>> GetDayDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000);
+
+        /// <summary>
+        /// C23取设备运行时间日历史数据
+        /// 遵循C47-C50的规则
+        /// </summary>
+        Task<List<RunningTimeHistory>> GetRunningTimeDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000);
+
+        /// <summary>C24上传数采仪开机时间</summary>
+        event ActivelyPushDataServerEventHandler<(DateTime dataTime, DateTime restartTime, RspInfo RspInfo)> OnUploadAcquisitionDeviceRestartTime;
+
+        /// <summary>C25上传噪声声级实时数据</summary>
+        event ActivelyPushDataServerEventHandler<(DateTime dataTime, float noiseLevel, RspInfo RspInfo)> OnUploadRealTimeNoiseLevel;
     }
 }
