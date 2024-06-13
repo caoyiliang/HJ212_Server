@@ -18,4 +18,10 @@ public class StatisticsData(string name)
     public string? Max { get; set; }
     /// <summary>监测仪器数据标记</summary>
     public string? Flag { get; set; }
+    /// <summary>昼夜等效升级</summary>
+    public string? Data { get; set; }
+    /// <summary>昼间等效升级</summary>
+    public string? DayData { get; set; }
+    /// <summary>夜间等效升级</summary>
+    public string? NightData { get; set; }
 }

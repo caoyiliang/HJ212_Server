@@ -35,7 +35,6 @@ namespace HJ212_Server
         public event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)>? OnUploadDayData;
         public event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<RunningTimeData> data, RspInfo RspInfo)>? OnUploadRunningTimeData;
         public event ActivelyPushDataServerEventHandler<(DateTime dataTime, DateTime restartTime, RspInfo RspInfo)>? OnUploadAcquisitionDeviceRestartTime;
-        public event ActivelyPushDataServerEventHandler<(DateTime dataTime, float noiseLevel, RspInfo RspInfo)>? OnUploadRealTimeNoiseLevel;
 
         public GB_Server(IPhysicalPort_Server physicalPort_Server, Version version = Version.HJT212_2017)
         {
@@ -117,9 +116,11 @@ namespace HJ212_Server
         #region c4
         private async Task AskSetSystemTimeRspEvent(int clientId, (string PolId, RspInfo RspInfo) rs)
         {
-            await _condorPort.SendAsync(clientId, new ResponseReq(rs.RspInfo));
             if (OnAskSetSystemTime is not null)
+            {
+                await _condorPort.SendAsync(clientId, new ResponseReq(rs.RspInfo));
                 await OnAskSetSystemTime.Invoke(clientId, rs);
+            }
         }
         #endregion
 
@@ -191,65 +192,72 @@ namespace HJ212_Server
         #region c14、c25
         private async Task UploadRealTimeDataRspEvent(int clientId, (DateTime dataTime, List<RealTimeData> data, RspInfo RspInfo) rs)
         {
-            if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
-            var rtd = rs.data.Find(_ => _.Name == "LA");
-            if (OnUploadRealTimeNoiseLevel is not null && rtd is not null)
+            if (OnUploadRealTimeData is not null)
             {
-                if (float.TryParse(rtd.Rtd, out var la))
-                    await OnUploadRealTimeNoiseLevel.Invoke(clientId, (rs.dataTime, la, rs.RspInfo));
+                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+                await OnUploadRealTimeData.Invoke(clientId, rs);
             }
-            else if (OnUploadRealTimeData is not null) await OnUploadRealTimeData.Invoke(clientId, rs);
         }
         #endregion
 
         #region c15
         private async Task UploadRunningStateDataRspEvent(int clientId, (DateTime dataTime, List<RunningStateData> data, RspInfo RspInfo) rs)
         {
-            if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
             if (OnUploadRunningStateData is not null)
+            {
+                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
                 await OnUploadRunningStateData.Invoke(clientId, rs);
+            }
         }
         #endregion
 
-        #region c16
+        #region c16、c26
         private async Task UploadMinuteDataRspEvent(int clientId, (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) rs)
         {
-            if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
             if (OnUploadMinuteData is not null)
+            {
+                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
                 await OnUploadMinuteData.Invoke(clientId, rs);
+            }
         }
         #endregion
 
-        #region c17
+        #region c17、c27
         private async Task UploadHourDataRspEvent(int clientId, (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) rs)
         {
-            if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
             if (OnUploadHourData is not null)
+            {
+                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
                 await OnUploadHourData.Invoke(clientId, rs);
+            }
         }
         #endregion
 
-        #region c18
+        #region c18、c28
         private async Task UploadDayDataRspEvent(int clientId, (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) rs)
         {
-            if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
             if (OnUploadDayData is not null)
+            {
+                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
                 await OnUploadDayData.Invoke(clientId, rs);
+            }
         }
         #endregion
 
         #region c19
         private async Task UploadRunningTimeDataRspEvent(int clientId, (DateTime dataTime, List<RunningTimeData> data, RspInfo RspInfo) rs)
         {
-            if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
             if (OnUploadRunningTimeData is not null)
+            {
+                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
                 await OnUploadRunningTimeData.Invoke(clientId, rs);
+            }
         }
         #endregion
 
@@ -312,10 +320,19 @@ namespace HJ212_Server
         #region c24
         private async Task UploadAcquisitionDeviceRestartTimeRspEvent(int clientId, (DateTime dataTime, DateTime restartTime, RspInfo RspInfo) rs)
         {
-            if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
             if (OnUploadAcquisitionDeviceRestartTime is not null)
+            {
+                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
                 await OnUploadAcquisitionDeviceRestartTime.Invoke(clientId, rs);
+            }
+        }
+        #endregion
+
+        #region c30
+        public async Task CalibrateAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        {
+            await _condorPort.RequestAsync<CalibrateReq, CN9011Rsp, CN9012Rsp>(clientId, new CalibrateReq(mn, pw, st, polId), timeOut);
         }
         #endregion
     }

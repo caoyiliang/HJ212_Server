@@ -60,6 +60,7 @@ namespace HJ212_Server
 
         /// <summary>
         /// C14上传污染物实时数据
+        /// (C25上传噪声声级实时数据 同)
         /// (C29上传工况实时数据 同)
         /// </summary>
         event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<RealTimeData> data, RspInfo RspInfo)> OnUploadRealTimeData;
@@ -67,13 +68,22 @@ namespace HJ212_Server
         /// <summary>C15上传设备运行状态数据</summary>
         event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<RunningStateData> data, RspInfo RspInfo)> OnUploadRunningStateData;
 
-        /// <summary>C16上传污染物分钟数据</summary>
+        /// <summary>
+        /// C16上传污染物分钟数据
+        /// (C26上传噪声声级分钟数据 同)
+        /// </summary>
         event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)> OnUploadMinuteData;
 
-        /// <summary>C17上传污染物小时数据</summary>
+        /// <summary>
+        /// C17上传污染物小时数据
+        /// (C27上传噪声声级小时数据 同)
+        /// </summary>
         event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)> OnUploadHourData;
 
-        /// <summary>C18上传污染物日历史数据</summary>
+        /// <summary>
+        /// C18上传污染物日历史数据
+        /// (C28上传噪声声级日历史数据 同)
+        /// </summary>
         event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)> OnUploadDayData;
 
         /// <summary>C19上传设备运行时间日历史数据</summary>
@@ -106,7 +116,7 @@ namespace HJ212_Server
         /// <summary>C24上传数采仪开机时间</summary>
         event ActivelyPushDataServerEventHandler<(DateTime dataTime, DateTime restartTime, RspInfo RspInfo)> OnUploadAcquisitionDeviceRestartTime;
 
-        /// <summary>C25上传噪声声级实时数据</summary>
-        event ActivelyPushDataServerEventHandler<(DateTime dataTime, float noiseLevel, RspInfo RspInfo)> OnUploadRealTimeNoiseLevel;
+        /// <summary>C30零点校准量程校准</summary>
+        Task CalibrateAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000);
     }
 }

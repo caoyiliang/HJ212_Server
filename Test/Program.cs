@@ -15,12 +15,6 @@ gb.OnUploadHourData += Gb_OnUploadHourData;
 gb.OnUploadDayData += Gb_OnUploadDayData;
 gb.OnUploadRunningTimeData += Gb_OnUploadRunningTimeData;
 gb.OnUploadAcquisitionDeviceRestartTime += Gb_OnUploadAcquisitionDeviceRestartTime;
-gb.OnUploadRealTimeNoiseLevel += Gb_OnUploadRealTimeNoiseLevel;
-
-async Task Gb_OnUploadRealTimeNoiseLevel(int clientId, (DateTime dataTime, float noiseLevel, RspInfo RspInfo) objects)
-{
-    await Task.CompletedTask;
-}
 
 async Task Gb_OnUploadAcquisitionDeviceRestartTime(int clientId, (DateTime dataTime, DateTime restartTime, RspInfo RspInfo) objects)
 {
@@ -156,15 +150,19 @@ async Task Gb_OnClientConnect(int clientId)
         #endregion
 
         #region c23
-        var rs = await gb.GetRunningTimeDataAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, DateTime.Now.AddDays(5), DateTime.Now);
-        foreach (var item in rs)
-        {
-            Console.WriteLine(item.DataTime);
-            foreach (var data in item.Data)
-            {
-                Console.WriteLine($"Name:{data.Name} RT:{data.RT}");
-            }
-        }
+        //var rs = await gb.GetRunningTimeDataAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, DateTime.Now.AddDays(5), DateTime.Now);
+        //foreach (var item in rs)
+        //{
+        //    Console.WriteLine(item.DataTime);
+        //    foreach (var data in item.Data)
+        //    {
+        //        Console.WriteLine($"Name:{data.Name} RT:{data.RT}");
+        //    }
+        //}
+        #endregion
+
+        #region c30
+        await gb.CalibrateAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001");
         #endregion
     }
     catch (TimeoutException ex)
