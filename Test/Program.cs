@@ -15,6 +15,18 @@ gb.OnUploadHourData += Gb_OnUploadHourData;
 gb.OnUploadDayData += Gb_OnUploadDayData;
 gb.OnUploadRunningTimeData += Gb_OnUploadRunningTimeData;
 gb.OnUploadAcquisitionDeviceRestartTime += Gb_OnUploadAcquisitionDeviceRestartTime;
+gb.OnUploadSN += Gb_OnUploadSN;
+gb.OnUploadLog += Gb_OnUploadLog;
+
+async Task Gb_OnUploadLog(int clientId, (DateTime DataTime, string? PolId, string Log, RspInfo RspInfo) objects)
+{
+    await Task.CompletedTask;
+}
+
+async Task Gb_OnUploadSN(int clientId, (DateTime DataTime, string PolId, string SN, RspInfo RspInfo) objects)
+{
+    await Task.CompletedTask;
+}
 
 async Task Gb_OnUploadAcquisitionDeviceRestartTime(int clientId, (DateTime dataTime, DateTime restartTime, RspInfo RspInfo) objects)
 {
@@ -183,7 +195,22 @@ async Task Gb_OnClientConnect(int clientId)
         #endregion
 
         #region c35
-        await gb.SetSamplingPeriodAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001", new TimeOnly(12, 30), 2);
+        //await gb.SetSamplingPeriodAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001", new TimeOnly(12, 30), 2);
+        #endregion
+
+        #region c36
+        //var rs = await gb.GetSamplingPeriodAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001");
+        //Console.WriteLine(rs);
+        #endregion
+
+        #region c37
+        //var rs = await gb.GetSampleExtractionTimeAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001");
+        //Console.WriteLine(rs);
+        #endregion
+
+        #region c38
+        var rs = await gb.GetSNAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001");
+        Console.WriteLine(rs);
         #endregion
     }
     catch (TimeoutException ex)

@@ -4,14 +4,15 @@ using TopPortLib.Interfaces;
 
 namespace HJ212_Server.Response
 {
-    internal class UploadAcquisitionDeviceRestartTimeRsp : IAsyncResponse_Server<(DateTime DataTime, DateTime RestartTime, RspInfo RspInfo)>
+    internal class UploadLogRsp : IAsyncResponse_Server<(DateTime DataTime, string? PolId, string Log, RspInfo RspInfo)>
     {
         private DateTime _dataTime;
-        private DateTime _restartTime;
+        private string? _polId;
+        private string _log = null!;
         private readonly RspInfo _rspInfo = new();
         public async Task AnalyticalData(string clientInfo, byte[] bytes)
         {
-            var str = Encoding.ASCII.GetString(bytes.Skip(6).ToArray());
+            var str = Encoding.UTF8.GetString(bytes.Skip(6).ToArray());
             var data = str.Split("CP=&&");
             var dataInfo = data[0].Split([";", ",", "&&"], StringSplitOptions.RemoveEmptyEntries);
             _rspInfo.QN = dataInfo.FirstOrDefault(item => item.Contains("QN"));
@@ -25,24 +26,23 @@ namespace HJ212_Server.Response
             var dataList = data[1].Split([";", "&&"], StringSplitOptions.RemoveEmptyEntries).Where(item => item.Contains('='));
             if (!DateTime.TryParseExact(dataList.SingleOrDefault(item => item.Contains("DataTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _dataTime))
             {
-                throw new ArgumentException($"GB_Server HJ212 UploadAcquisitionDeviceRestartTime DataTime Error");
+                throw new ArgumentException($"GB_Server HJ212 UploadLog DataTime Error");
             }
-            if (!DateTime.TryParseExact(dataList.SingleOrDefault(item => item.Contains("RestartTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _restartTime))
-            {
-                throw new ArgumentException($"GB_Server HJ212 UploadAcquisitionDeviceRestartTime RestartTime Error");
-            }
+            _polId = dataList.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1];
+            _log = dataList.SingleOrDefault(item => item.Contains("-Info"))?.Split('=')[1].Replace("//", "") ?? throw new ArgumentException($"GB_Server HJ212 UploadLog Info Error");
             await Task.CompletedTask;
         }
 
         public (bool Type, byte[]? CheckBytes) Check(string clientInfo, byte[] bytes)
         {
-            var rs = Encoding.ASCII.GetString(bytes).Split(';');
-            return (rs.Where(item => item.Contains($"CN={(int)CN_Client.上传数采仪开机时间}")).Any(), default);
+            var str = Encoding.UTF8.GetString(bytes);
+            var rs = str.Split(';');
+            return (rs.Where(item => item.Contains($"CN={(int)CN_Client.上传现场机信息}")).Any(), default);
         }
 
-        public (DateTime DataTime, DateTime RestartTime, RspInfo RspInfo) GetResult()
+        public (DateTime DataTime, string? PolId, string Log, RspInfo RspInfo) GetResult()
         {
-            return (_dataTime, _restartTime, _rspInfo);
+            return (_dataTime, _polId, _log, _rspInfo);
         }
     }
 }

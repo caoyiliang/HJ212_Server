@@ -4,7 +4,7 @@ using TopPortLib.Interfaces;
 
 namespace HJ212_Server.Response
 {
-    internal class UploadRealTimeDataRsp : IAsyncResponse_Server<(DateTime dataTime, List<RealTimeData> data, RspInfo RspInfo)>
+    internal class UploadRealTimeDataRsp : IAsyncResponse_Server<(DateTime DataTime, List<RealTimeData> Data, RspInfo RspInfo)>
     {
         private DateTime _dataTime;
         private List<RealTimeData> _data = [];
@@ -50,7 +50,7 @@ namespace HJ212_Server.Response
             return (rs.Where(item => item.Contains($"CN={(int)CN_Client.上传污染物实时数据}")).Any(), default);
         }
 
-        public (DateTime dataTime, List<RealTimeData> data, RspInfo RspInfo) GetResult()
+        public (DateTime DataTime, List<RealTimeData> Data, RspInfo RspInfo) GetResult()
         {
             return (_dataTime, _data, _rspInfo);
         }

@@ -4,13 +4,12 @@ using TopPortLib.Interfaces;
 
 namespace HJ212_Server.Response
 {
-    internal class UploadRunningTimeDataRsp : IAsyncResponse_Server<(DateTime DataTime, List<RunningTimeData> Data, RspInfo RspInfo)>, IRspEnumerable
+    internal class UploadSNRsp : IAsyncResponse_Server<(DateTime DataTime, string PolId, string SN, RspInfo RspInfo)>
     {
         private DateTime _dataTime;
-        private List<RunningTimeData> _data = [];
+        private string _polId = null!;
+        private string _sn = null!;
         private readonly RspInfo _rspInfo = new();
-        private int? PNUM;
-        private int? PNO;
         public async Task AnalyticalData(string clientInfo, byte[] bytes)
         {
             var str = Encoding.ASCII.GetString(bytes.Skip(6).ToArray());
@@ -24,45 +23,26 @@ namespace HJ212_Server.Response
             {
                 _rspInfo.Flag = flag;
             }
-            if (int.TryParse(dataInfo.FirstOrDefault(item => item.Contains("PNUM"))?.Split('=')[1], out var pnum))
-            {
-                PNUM = pnum;
-            }
-            if (int.TryParse(dataInfo.FirstOrDefault(item => item.Contains("PNO"))?.Split('=')[1], out var pno))
-            {
-                PNO = pno;
-            }
             var dataList = data[1].Split([";", "&&"], StringSplitOptions.RemoveEmptyEntries).Where(item => item.Contains('='));
             if (!DateTime.TryParseExact(dataList.SingleOrDefault(item => item.Contains("DataTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _dataTime))
             {
-                throw new ArgumentException($"GB_Server HJ212 UploadRunningTimeData DataTime Error");
+                throw new ArgumentException($"GB_Server HJ212 UploadSN DataTime Error");
             }
-            foreach (var item in dataList)
-            {
-                if (item.Contains("DataTime")) continue;
-
-                var rtdata = new RunningTimeData(item.Split('-')[0], item.Split('=')[1]);
-                _data.Add(rtdata);
-            }
+            _polId = dataList.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1] ?? throw new ArgumentException($"GB_Server HJ212 UploadSN PolId Error");
+            _sn = dataList.SingleOrDefault(item => item.Contains("-SN"))?.Split('=')[1] ?? throw new ArgumentException($"GB_Server HJ212 UploadSN SN Error");
             await Task.CompletedTask;
         }
 
         public (bool Type, byte[]? CheckBytes) Check(string clientInfo, byte[] bytes)
         {
-            var rs = Encoding.ASCII.GetString(bytes).Split(';');
-            return (rs.Where(item => item.Contains($"CN={(int)CN_Client.上传设备运行时间日历史数据}")).Any(), default);
+            var str = Encoding.ASCII.GetString(bytes);
+            var rs = str.Split(';');
+            return (str.Contains("DataTime") && rs.Where(item => item.Contains($"CN={(int)CN_Client.上传设备唯一标识}")).Any(), default);
         }
 
-        public (DateTime DataTime, List<RunningTimeData> Data, RspInfo RspInfo) GetResult()
+        public (DateTime DataTime, string PolId, string SN, RspInfo RspInfo) GetResult()
         {
-            return (_dataTime, _data, _rspInfo);
-        }
-
-        public async Task<bool> IsFinish() => await Task.FromResult(PNUM == null || PNO == null || PNO == PNUM);
-
-        public bool NeedCheck()
-        {
-            return false;
+            return (_dataTime, _polId, _sn, _rspInfo);
         }
     }
 }

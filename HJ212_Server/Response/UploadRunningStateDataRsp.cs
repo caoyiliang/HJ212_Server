@@ -4,7 +4,7 @@ using TopPortLib.Interfaces;
 
 namespace HJ212_Server.Response
 {
-    internal class UploadRunningStateDataRsp : IAsyncResponse_Server<(DateTime dataTime, List<RunningStateData> data, RspInfo RspInfo)>
+    internal class UploadRunningStateDataRsp : IAsyncResponse_Server<(DateTime DataTime, List<RunningStateData> Data, RspInfo RspInfo)>
     {
         private DateTime _dataTime;
         private List<RunningStateData> _data = [];
@@ -43,7 +43,7 @@ namespace HJ212_Server.Response
             return (rs.Where(item => item.Contains($"CN={(int)CN_Client.上传设备运行状态数据}")).Any(), default);
         }
 
-        public (DateTime dataTime, List<RunningStateData> data, RspInfo RspInfo) GetResult()
+        public (DateTime DataTime, List<RunningStateData> Data, RspInfo RspInfo) GetResult()
         {
             return (_dataTime, _data, _rspInfo);
         }

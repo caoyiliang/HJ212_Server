@@ -4,10 +4,10 @@ using TopPortLib.Interfaces;
 
 namespace HJ212_Server.Response
 {
-    internal class UploadHourDataRsp : IAsyncResponse_Server<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)>, IRspEnumerable
+    internal class UploadHourDataRsp : IAsyncResponse_Server<(DateTime DataTime, List<StatisticsData> Data, RspInfo RspInfo)>, IRspEnumerable
     {
         private DateTime _dataTime;
-        private List<StatisticsData> _data = [];
+        private readonly List<StatisticsData> _data = [];
         private readonly RspInfo _rspInfo = new();
         private int? PNUM;
         private int? PNO;
@@ -61,7 +61,7 @@ namespace HJ212_Server.Response
             return (rs.Where(item => item.Contains($"CN={(int)CN_Client.上传污染物小时数据}")).Any(), default);
         }
 
-        public (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) GetResult()
+        public (DateTime DataTime, List<StatisticsData> Data, RspInfo RspInfo) GetResult()
         {
             return (_dataTime, _data, _rspInfo);
         }

@@ -63,31 +63,31 @@ namespace HJ212_Server
         /// (C25上传噪声声级实时数据 同)
         /// (C29上传工况实时数据 同)
         /// </summary>
-        event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<RealTimeData> data, RspInfo RspInfo)> OnUploadRealTimeData;
+        event ActivelyPushDataServerEventHandler<(DateTime DataTime, List<RealTimeData> Data, RspInfo RspInfo)> OnUploadRealTimeData;
 
         /// <summary>C15上传设备运行状态数据</summary>
-        event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<RunningStateData> data, RspInfo RspInfo)> OnUploadRunningStateData;
+        event ActivelyPushDataServerEventHandler<(DateTime DataTime, List<RunningStateData> Data, RspInfo RspInfo)> OnUploadRunningStateData;
 
         /// <summary>
         /// C16上传污染物分钟数据
         /// (C26上传噪声声级分钟数据 同)
         /// </summary>
-        event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)> OnUploadMinuteData;
+        event ActivelyPushDataServerEventHandler<(DateTime DataTime, List<StatisticsData> Data, RspInfo RspInfo)> OnUploadMinuteData;
 
         /// <summary>
         /// C17上传污染物小时数据
         /// (C27上传噪声声级小时数据 同)
         /// </summary>
-        event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)> OnUploadHourData;
+        event ActivelyPushDataServerEventHandler<(DateTime DataTime, List<StatisticsData> Data, RspInfo RspInfo)> OnUploadHourData;
 
         /// <summary>
         /// C18上传污染物日历史数据
         /// (C28上传噪声声级日历史数据 同)
         /// </summary>
-        event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo)> OnUploadDayData;
+        event ActivelyPushDataServerEventHandler<(DateTime DataTime, List<StatisticsData> Data, RspInfo RspInfo)> OnUploadDayData;
 
         /// <summary>C19上传设备运行时间日历史数据</summary>
-        event ActivelyPushDataServerEventHandler<(DateTime dataTime, List<RunningTimeData> data, RspInfo RspInfo)> OnUploadRunningTimeData;
+        event ActivelyPushDataServerEventHandler<(DateTime DataTime, List<RunningTimeData> Data, RspInfo RspInfo)> OnUploadRunningTimeData;
 
         /// <summary>
         /// C20取污染物分钟历史数据
@@ -114,7 +114,7 @@ namespace HJ212_Server
         Task<List<RunningTimeHistory>> GetRunningTimeDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000);
 
         /// <summary>C24上传数采仪开机时间</summary>
-        event ActivelyPushDataServerEventHandler<(DateTime dataTime, DateTime restartTime, RspInfo RspInfo)> OnUploadAcquisitionDeviceRestartTime;
+        event ActivelyPushDataServerEventHandler<(DateTime DataTime, DateTime RestartTime, RspInfo RspInfo)> OnUploadAcquisitionDeviceRestartTime;
 
         /// <summary>C30零点校准量程校准</summary>
         Task CalibrateAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000);
@@ -133,5 +133,20 @@ namespace HJ212_Server
 
         /// <summary>C35设置采样时间周期(单位：小时)</summary>
         Task SetSamplingPeriodAsync(int clientId, string mn, string pw, ST st, string polId, TimeOnly cstartTime, int ctime, int timeOut = 5000);
+
+        /// <summary>C36提取采样时间周期(单位：小时)</summary>
+        Task<(TimeOnly CstartTime, int CTime)> GetSamplingPeriodAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000);
+
+        /// <summary>C37提取出样时间(单位：分钟)</summary>
+        Task<int> GetSampleExtractionTimeAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000);
+
+        /// <summary>C38提取设备唯一标识</summary>
+        Task<string> GetSNAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000);
+
+        /// <summary>C39上传设备唯一标识</summary>
+        event ActivelyPushDataServerEventHandler<(DateTime DataTime, string PolId, string SN, RspInfo RspInfo)> OnUploadSN;
+
+        /// <summary>C40上传现场机信息（日志）</summary>
+        event ActivelyPushDataServerEventHandler<(DateTime DataTime, string? PolId, string Log, RspInfo RspInfo)> OnUploadLog;
     }
 }
