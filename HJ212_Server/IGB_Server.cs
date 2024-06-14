@@ -118,5 +118,20 @@ namespace HJ212_Server
 
         /// <summary>C30零点校准量程校准</summary>
         Task CalibrateAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000);
+
+        /// <summary>C31即时采样</summary>
+        Task RealTimeSamplingAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000);
+
+        /// <summary>C32启动清洗/反吹</summary>
+        Task StartCleaningOrBlowbackAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000);
+
+        /// <summary>C33比对采样</summary>
+        Task ComparisonSamplingAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000);
+
+        /// <summary>C34超标留样</summary>
+        Task<(DateTime DataTime, string VaseNo)> OutOfStandardRetentionSampleAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000);
+
+        /// <summary>C35设置采样时间周期(单位：小时)</summary>
+        Task SetSamplingPeriodAsync(int clientId, string mn, string pw, ST st, string polId, TimeOnly cstartTime, int ctime, int timeOut = 5000);
     }
 }

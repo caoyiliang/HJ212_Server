@@ -162,7 +162,28 @@ async Task Gb_OnClientConnect(int clientId)
         #endregion
 
         #region c30
-        await gb.CalibrateAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001");
+        //await gb.CalibrateAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001");
+        #endregion
+
+        #region c31
+        //await gb.RealTimeSamplingAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001");
+        #endregion
+
+        #region c32
+        //await gb.StartCleaningOrBlowbackAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001");
+        #endregion
+
+        #region c33
+        //await gb.ComparisonSamplingAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001");
+        #endregion
+
+        #region c34
+        //var rs = await gb.OutOfStandardRetentionSampleAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源);
+        //Console.WriteLine(rs);
+        #endregion
+
+        #region c35
+        await gb.SetSamplingPeriodAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001", new TimeOnly(12, 30), 2);
         #endregion
     }
     catch (TimeoutException ex)

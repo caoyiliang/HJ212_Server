@@ -335,5 +335,42 @@ namespace HJ212_Server
             await _condorPort.RequestAsync<CalibrateReq, CN9011Rsp, CN9012Rsp>(clientId, new CalibrateReq(mn, pw, st, polId), timeOut);
         }
         #endregion
+
+        #region c31
+        public async Task RealTimeSamplingAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        {
+            await _condorPort.RequestAsync<RealTimeSamplingReq, CN9011Rsp, CN9012Rsp>(clientId, new RealTimeSamplingReq(mn, pw, st, polId), timeOut);
+        }
+        #endregion
+
+        #region c32
+        public async Task StartCleaningOrBlowbackAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        {
+            await _condorPort.RequestAsync<StartCleaningOrBlowbackReq, CN9011Rsp, CN9012Rsp>(clientId, new StartCleaningOrBlowbackReq(mn, pw, st, polId), timeOut);
+        }
+        #endregion
+
+        #region c33
+        public async Task ComparisonSamplingAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        {
+            await _condorPort.RequestAsync<ComparisonSamplingReq, CN9011Rsp, CN9012Rsp>(clientId, new ComparisonSamplingReq(mn, pw, st, polId), timeOut);
+        }
+        #endregion
+
+        #region c34
+        public async Task<(DateTime DataTime, string VaseNo)> OutOfStandardRetentionSampleAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
+        {
+            var (_, Rsp2, _) = await _condorPort.RequestAsync<GetReq, CN9011Rsp, OutOfStandardRetentionSampleRsp, CN9012Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.超标留样), timeOut);
+            var rs2 = Rsp2.ToList()[0].GetResult();
+            return (rs2.DataTime, rs2.VaseNo);
+        }
+        #endregion
+
+        #region c35
+        public async Task SetSamplingPeriodAsync(int clientId, string mn, string pw, ST st, string polId, TimeOnly cstartTime, int ctime, int timeOut = 5000)
+        {
+            await _condorPort.RequestAsync<SetSamplingPeriodReq, CN9011Rsp, CN9012Rsp>(clientId, new SetSamplingPeriodReq(mn, pw, st, polId, cstartTime, ctime), timeOut);
+        }
+        #endregion
     }
 }
