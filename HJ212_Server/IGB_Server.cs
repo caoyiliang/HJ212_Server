@@ -4,6 +4,9 @@ using TopPortLib;
 
 namespace HJ212_Server
 {
+    /// <summary>
+    /// 国标服务端
+    /// </summary>
     public interface IGB_Server
     {
         /// <summary>国标版本</summary>
@@ -14,9 +17,13 @@ namespace HJ212_Server
         Task StartAsync();
         /// <summary>关闭监听</summary>
         Task StopAsync();
+        /// <summary>客户端连接事件</summary>
         event ClientConnectEventHandler OnClientConnect;
+        /// <summary>客户端断连事件</summary>
         event ClientDisconnectEventHandler OnClientDisconnect;
+        /// <summary>发送数据事件</summary>
         event RequestedLogServerEventHandler OnSentData;
+        /// <summary>收到数据事件</summary>
         event RespondedLogServerEventHandler OnReceivedData;
 
         /// <summary>C1设置超时时间及重发次数</summary>
