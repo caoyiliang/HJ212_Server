@@ -17,6 +17,12 @@ gb.OnUploadRunningTimeData += Gb_OnUploadRunningTimeData;
 gb.OnUploadAcquisitionDeviceRestartTime += Gb_OnUploadAcquisitionDeviceRestartTime;
 gb.OnUploadSN += Gb_OnUploadSN;
 gb.OnUploadLog += Gb_OnUploadLog;
+gb.OnUploadInfo += Gb_OnUploadInfo;
+
+async Task Gb_OnUploadInfo(int clientId, (DateTime DataTime, string PolId, List<DeviceInfo> DeviceInfos, RspInfo RspInfo) objects)
+{
+    await Task.CompletedTask;
+}
 
 async Task Gb_OnUploadLog(int clientId, (DateTime DataTime, string? PolId, string Log, RspInfo RspInfo) objects)
 {
@@ -209,8 +215,30 @@ async Task Gb_OnClientConnect(int clientId)
         #endregion
 
         #region c38
-        var rs = await gb.GetSNAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001");
-        Console.WriteLine(rs);
+        //var rs = await gb.GetSNAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a34001");
+        //Console.WriteLine(rs);
+        #endregion
+
+        #region c41
+        //var rs = await gb.GetLogInfosAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a1001", DateTime.Now.AddDays(-5), DateTime.Now);
+        //foreach (var item in rs)
+        //{
+        //    Console.WriteLine($"DataTime:{item.DataTime}{(item.PolId == null ? "" : $" PolId:{item.PolId}")} Log:{item.Info}");
+        //}
+        #endregion
+
+        #region c43
+        //var rs = await gb.GetStateInfoAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a1001");
+        //Console.WriteLine(rs);
+        #endregion
+
+        #region c45
+        //var rs = await gb.GetArgumentInfoAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a1001");
+        //Console.WriteLine(rs);
+        #endregion
+
+        #region c46
+        await gb.SetInfoAsync(clientId, "1234567890123456", "123456", ST.大气环境污染源, "a1001", "i13004", "106.5");
         #endregion
     }
     catch (TimeoutException ex)

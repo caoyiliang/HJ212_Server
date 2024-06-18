@@ -148,5 +148,23 @@ namespace HJ212_Server
 
         /// <summary>C40上传现场机信息（日志）</summary>
         event ActivelyPushDataServerEventHandler<(DateTime DataTime, string? PolId, string Log, RspInfo RspInfo)> OnUploadLog;
+
+        /// <summary>C41提取现场机信息（日志）</summary>
+        Task<List<LogInfo>> GetLogInfosAsync(int clientId, string mn, string pw, ST st, string? polId, DateTime beginTime, DateTime endTime, int timeOut = 5000);
+
+        /// <summary>
+        /// C42上传现场机信息（状态）
+        /// (C44上传现场机信息（参数） 同)
+        /// </summary>
+        event ActivelyPushDataServerEventHandler<(DateTime DataTime, string PolId, List<DeviceInfo> DeviceInfos, RspInfo RspInfo)> OnUploadInfo;
+
+        /// <summary>C43提取现场机信息（状态）</summary>
+        Task<string> GetStateInfoAsync(int client, string mn, string pw, ST st, string polId, int timeOut = 5000);
+
+        /// <summary>C45提取现场机信息（参数）</summary>
+        Task<string> GetArgumentInfoAsync(int client, string mn, string pw, ST st, string polId, int timeOut = 5000);
+
+        /// <summary>C46设置现场机参数</summary>
+        Task SetInfoAsync(int client, string mn, string pw, ST st, string polId, string infoId, string info, int timeOut = 5000);
     }
 }

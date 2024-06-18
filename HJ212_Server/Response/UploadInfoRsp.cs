@@ -4,17 +4,15 @@ using TopPortLib.Interfaces;
 
 namespace HJ212_Server.Response
 {
-    internal class UploadLogRsp : IAsyncResponse_Server<(DateTime DataTime, string? PolId, string Log, RspInfo RspInfo)>, IRspEnumerable
+    internal class UploadInfoRsp : IAsyncResponse_Server<(DateTime DataTime, string PolId, List<DeviceInfo> DeviceInfos, RspInfo RspInfo)>, IRspEnumerable
     {
         private DateTime _dataTime;
-        private string? _polId;
-        private string _log = null!;
+        private string _polId = null!;
+        private List<DeviceInfo> _DeviceInfos = [];
         private readonly RspInfo _rspInfo = new();
-        private int? PNUM;
-        private int? PNO;
         public async Task AnalyticalData(string clientInfo, byte[] bytes)
         {
-            var str = Encoding.UTF8.GetString(bytes.Skip(6).ToArray());
+            var str = Encoding.ASCII.GetString(bytes.Skip(6).ToArray());
             var data = str.Split("CP=&&");
             var dataInfo = data[0].Split([";", ",", "&&"], StringSplitOptions.RemoveEmptyEntries);
             _rspInfo.QN = dataInfo.FirstOrDefault(item => item.Contains("QN"));
@@ -25,37 +23,32 @@ namespace HJ212_Server.Response
             {
                 _rspInfo.Flag = flag;
             }
-            if (int.TryParse(dataInfo.FirstOrDefault(item => item.Contains("PNUM"))?.Split('=')[1], out var pnum))
-            {
-                PNUM = pnum;
-            }
-            if (int.TryParse(dataInfo.FirstOrDefault(item => item.Contains("PNO"))?.Split('=')[1], out var pno))
-            {
-                PNO = pno;
-            }
             var dataList = data[1].Split([";", "&&"], StringSplitOptions.RemoveEmptyEntries).Where(item => item.Contains('='));
             if (!DateTime.TryParseExact(dataList.SingleOrDefault(item => item.Contains("DataTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _dataTime))
             {
-                throw new ArgumentException($"GB_Server HJ212 UploadLog DataTime Error");
+                throw new ArgumentException($"GB_Server HJ212 UploadInfo DataTime Error");
             }
-            _polId = dataList.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1];
-            _log = dataList.SingleOrDefault(item => item.Contains("-Info"))?.Split('=')[1].Replace("//", "") ?? throw new ArgumentException($"GB_Server HJ212 UploadLog Info Error");
+            _polId = dataList.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1] ?? throw new ArgumentException($"GB_Server HJ212 UploadInfo PolId Error");
+            foreach (var item in dataList.Where(item => item.Contains("-Info")))
+            {
+                _DeviceInfos.Add(new(item.Split('-')[0], item.Split('=')[1]));
+            }
             await Task.CompletedTask;
         }
 
         public (bool Type, byte[]? CheckBytes) Check(string clientInfo, byte[] bytes)
         {
-            var str = Encoding.UTF8.GetString(bytes);
+            var str = Encoding.ASCII.GetString(bytes);
             var rs = str.Split(';');
-            return (str.Contains("i11001") && rs.Where(item => item.Contains($"CN={(int)CN_Client.上传现场机信息}")).Any(), default);
+            return ((!str.Contains("i11001")) && rs.Where(item => item.Contains($"CN={(int)CN_Client.上传现场机信息}")).Any(), default);
         }
 
-        public (DateTime DataTime, string? PolId, string Log, RspInfo RspInfo) GetResult()
+        public (DateTime DataTime, string PolId, List<DeviceInfo> DeviceInfos, RspInfo RspInfo) GetResult()
         {
-            return (_dataTime, _polId, _log, _rspInfo);
+            return (_dataTime, _polId, _DeviceInfos, _rspInfo);
         }
 
-        public async Task<bool> IsFinish() => await Task.FromResult(PNUM == null || PNO == null || PNO == PNUM);
+        public async Task<bool> IsFinish() => await Task.FromResult(true);
 
         public bool NeedCheck()
         {

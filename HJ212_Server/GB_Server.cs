@@ -37,6 +37,7 @@ namespace HJ212_Server
         public event ActivelyPushDataServerEventHandler<(DateTime DataTime, DateTime RestartTime, RspInfo RspInfo)>? OnUploadAcquisitionDeviceRestartTime;
         public event ActivelyPushDataServerEventHandler<(DateTime DataTime, string PolId, string SN, RspInfo RspInfo)>? OnUploadSN;
         public event ActivelyPushDataServerEventHandler<(DateTime DataTime, string? PolId, string Log, RspInfo RspInfo)>? OnUploadLog;
+        public event ActivelyPushDataServerEventHandler<(DateTime DataTime, string PolId, List<DeviceInfo> DeviceInfos, RspInfo RspInfo)>? OnUploadInfo;
 
         public GB_Server(IPhysicalPort_Server physicalPort_Server, Version version = Version.HJT212_2017)
         {
@@ -423,6 +424,55 @@ namespace HJ212_Server
                     await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
                 await OnUploadLog.Invoke(clientId, rs);
             }
+        }
+        #endregion
+
+        #region c41
+        public async Task<List<LogInfo>> GetLogInfosAsync(int clientId, string mn, string pw, ST st, string? polId, DateTime beginTime, DateTime endTime, int timeOut = 5000)
+        {
+            var (_, Rsp2, _) = await _condorPort.RequestAsync<GetLogInfosReq, CN9011Rsp, UploadLogRsp, CN9012Rsp>(clientId, new GetLogInfosReq(mn, pw, st, polId, beginTime, endTime), timeOut);
+            var rs = new List<LogInfo>();
+            foreach (var item in Rsp2)
+            {
+                var iRs = item.GetResult();
+                rs.Add(new(iRs.Log, iRs.DataTime) { PolId = iRs.PolId });
+            }
+            return rs;
+        }
+        #endregion
+
+        #region c42
+        private async Task UploadInfoRspEvent(int clientId, (DateTime DataTime, string PolId, List<DeviceInfo> DeviceInfos, RspInfo RspInfo) rs)
+        {
+            if (OnUploadInfo is not null)
+            {
+                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+                await OnUploadInfo.Invoke(clientId, rs);
+            }
+        }
+        #endregion
+
+        #region c43
+        public async Task<string> GetStateInfoAsync(int client, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        {
+            var rs = await _condorPort.RequestAsync<GetInfoReq, CN9011Rsp, UploadInfoRsp, CN9012Rsp>(client, new GetInfoReq(mn, pw, st, polId, "i12001"), timeOut);
+            return rs.Rsp2.ToList()[0].GetResult().DeviceInfos[0].Info;
+        }
+        #endregion
+
+        #region c45
+        public async Task<string> GetArgumentInfoAsync(int client, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        {
+            var rs = await _condorPort.RequestAsync<GetInfoReq, CN9011Rsp, UploadInfoRsp, CN9012Rsp>(client, new GetInfoReq(mn, pw, st, polId, "i13004"), timeOut);
+            return rs.Rsp2.ToList()[0].GetResult().DeviceInfos[0].Info;
+        }
+        #endregion
+
+        #region c46
+        public async Task SetInfoAsync(int client, string mn, string pw, ST st, string polId, string infoId, string info, int timeOut = 5000)
+        {
+            await _condorPort.RequestAsync<SetInfoReq, CN9011Rsp, CN9012Rsp>(client, new SetInfoReq(mn, pw, st, polId, infoId, info), timeOut);
         }
         #endregion
     }
