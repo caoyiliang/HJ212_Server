@@ -13,6 +13,7 @@
         public string? PW { get; internal set; }
         /// <summary>设备唯一标识</summary>
         public string? MN { get; internal set; }
+        /// <summary>拆分包及应答标志</summary>
         public int? Flag { get; internal set; }
     }
 }
