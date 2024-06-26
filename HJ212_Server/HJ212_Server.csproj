@@ -7,13 +7,13 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>CSoft.Protocol.HJ212_Server</PackageId>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Authors>CSoft</Authors>
     <Description>HJ212服务端</Description>
     <PackageIcon>logo.png</PackageIcon>
     <RepositoryUrl>https://github.com/caoyiliang/HJ212_Server</RepositoryUrl>
     <PackageProjectUrl>https://github.com/caoyiliang/HJ212_Server</PackageProjectUrl>
-    <PackageReleaseNotes>更新依赖</PackageReleaseNotes>
+    <PackageReleaseNotes>修复C14 bug</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

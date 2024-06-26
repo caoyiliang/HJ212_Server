@@ -35,7 +35,7 @@ namespace HJ212_Server.Response
                 foreach (var prop in rtd)
                 {
                     if (prop.Contains("Rtd")) rtdata.Rtd = prop.Split('=')[1];
-                    else if (prop.Contains("Flag")) rtdata.Flag = prop.Split('=')[1];
+                    else if (prop.Contains("Flag") && (!prop.Contains("EFlag"))) rtdata.Flag = prop.Split('=')[1];
                     else if (prop.Contains("SampleTime")) rtdata.SampleTime = prop.Split('=')[1];
                     else if (prop.Contains("EFlag")) rtdata.EFlag = prop.Split('=')[1];
                 }
