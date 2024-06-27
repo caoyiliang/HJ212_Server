@@ -49,6 +49,7 @@ namespace HJ212_Server.Response
                     else if (prop.Contains("Avg")) rtdata.Avg = prop.Split('=')[1];
                     else if (prop.Contains("Max")) rtdata.Max = prop.Split('=')[1];
                     else if (prop.Contains("Flag")) rtdata.Flag = prop.Split('=')[1];
+                    else if (prop.Contains("Data")) rtdata.Data = prop.Split('=')[1];
                 }
                 _data.Add(rtdata);
             }
