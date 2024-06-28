@@ -7,7 +7,7 @@ namespace HJ212_Server.Response
     internal class UploadDayDataRsp : IAsyncResponse_Server<(DateTime DataTime, List<StatisticsData> Data, RspInfo RspInfo)>, IRspEnumerable
     {
         private DateTime _dataTime;
-        private List<StatisticsData> _data = [];
+        private readonly List<StatisticsData> _data = [];
         private readonly RspInfo _rspInfo = new();
         private int? PNUM;
         private int? PNO;

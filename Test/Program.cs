@@ -19,64 +19,64 @@ gb.OnUploadSN += Gb_OnUploadSN;
 gb.OnUploadLog += Gb_OnUploadLog;
 gb.OnUploadInfo += Gb_OnUploadInfo;
 
-async Task Gb_OnUploadInfo(int clientId, (DateTime DataTime, string PolId, List<DeviceInfo> DeviceInfos, RspInfo RspInfo) objects)
+async Task Gb_OnUploadInfo(Guid clientId, (DateTime DataTime, string PolId, List<DeviceInfo> DeviceInfos, RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;
 }
 
-async Task Gb_OnUploadLog(int clientId, (DateTime DataTime, string? PolId, string Log, RspInfo RspInfo) objects)
+async Task Gb_OnUploadLog(Guid clientId, (DateTime DataTime, string? PolId, string Log, RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;
 }
 
-async Task Gb_OnUploadSN(int clientId, (DateTime DataTime, string PolId, string SN, RspInfo RspInfo) objects)
+async Task Gb_OnUploadSN(Guid clientId, (DateTime DataTime, string PolId, string SN, RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;
 }
 
-async Task Gb_OnUploadAcquisitionDeviceRestartTime(int clientId, (DateTime dataTime, DateTime restartTime, RspInfo RspInfo) objects)
+async Task Gb_OnUploadAcquisitionDeviceRestartTime(Guid clientId, (DateTime dataTime, DateTime restartTime, RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;
 }
 
-async Task Gb_OnUploadRunningTimeData(int clientId, (DateTime dataTime, List<RunningTimeData> data, RspInfo RspInfo) objects)
+async Task Gb_OnUploadRunningTimeData(Guid clientId, (DateTime dataTime, List<RunningTimeData> data, RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;
 }
 
-async Task Gb_OnUploadDayData(int clientId, (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) objects)
+async Task Gb_OnUploadDayData(Guid clientId, (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;
 }
 
-async Task Gb_OnUploadHourData(int clientId, (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) objects)
+async Task Gb_OnUploadHourData(Guid clientId, (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;
 }
 
-async Task Gb_OnUploadMinuteData(int clientId, (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) objects)
+async Task Gb_OnUploadMinuteData(Guid clientId, (DateTime dataTime, List<StatisticsData> data, RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;
 }
 
-async Task Gb_OnUploadRunningStateData(int clientId, (DateTime dataTime, List<RunningStateData> data, RspInfo RspInfo) objects)
+async Task Gb_OnUploadRunningStateData(Guid clientId, (DateTime dataTime, List<RunningStateData> data, RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;
 }
 
-async Task Gb_OnUploadRealTimeData(int clientId, (DateTime dataTime, List<HJ212_Server.Model.RealTimeData> data, HJ212_Server.Model.RspInfo RspInfo) objects)
+async Task Gb_OnUploadRealTimeData(Guid clientId, (DateTime dataTime, List<HJ212_Server.Model.RealTimeData> data, HJ212_Server.Model.RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;
 }
 
-async Task Gb_OnAskSetSystemTime(int clientId, (string PolId, HJ212_Server.Model.RspInfo RspInfo) objects)
+async Task Gb_OnAskSetSystemTime(Guid clientId, (string PolId, HJ212_Server.Model.RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;
 }
 
 await gb.StartAsync();
 
-async Task Gb_OnClientConnect(int clientId)
+async Task Gb_OnClientConnect(Guid clientId)
 {
     try
     {

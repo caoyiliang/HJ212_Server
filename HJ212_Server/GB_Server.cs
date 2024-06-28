@@ -73,18 +73,18 @@ namespace HJ212_Server
             _condorPort.OnReceivedData += CondorPort_OnReceivedData;
         }
 
-        private async Task CondorPort_OnReceivedData(int clientId, byte[] data)
+        private async Task CondorPort_OnReceivedData(Guid clientId, byte[] data)
         {
             _logger.Trace($"GB_Server {await GetClientInfos(clientId)} Rec:<-- {Encoding.UTF8.GetString(data)}\n{StringByteUtils.BytesToString(data)}");
         }
 
-        private async Task CondorPort_OnSentData(int clientId, byte[] data)
+        private async Task CondorPort_OnSentData(Guid clientId, byte[] data)
         {
             _logger.Trace($"GB_Server {await GetClientInfos(clientId)} Send:--> {Encoding.UTF8.GetString(data)}");
         }
 
         /// <inheritdoc/>
-        public async Task<string?> GetClientInfos(int clientId) => await _condorPort.GetClientInfos(clientId);
+        public async Task<string?> GetClientInfos(Guid clientId) => await _condorPort.GetClientInfos(clientId);
 
         /// <inheritdoc/>
         public async Task StartAsync()
@@ -115,7 +115,7 @@ namespace HJ212_Server
 #pragma warning disable IDE0051 // 删除未使用的私有成员
         #region c1
         /// <inheritdoc/>
-        public async Task SetTimeoutAndRetryAsync(int clientId, string mn, string pw, ST st, int overTime, int reCount, int timeOut = 5000)
+        public async Task SetTimeoutAndRetryAsync(Guid clientId, string mn, string pw, ST st, int overTime, int reCount, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<SetTimeOutAndRetryReq, CN9011Rsp, CN9012Rsp>(clientId, new SetTimeOutAndRetryReq(mn, pw, st, overTime, reCount), timeOut);
         }
@@ -123,7 +123,7 @@ namespace HJ212_Server
 
         #region c2
         /// <inheritdoc/>
-        public async Task<DateTime> GetSystemTimeAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        public async Task<DateTime> GetSystemTimeAsync(Guid clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
         {
             var (_, Rsp2, _) = await _condorPort.RequestAsync<GetSystemTimeReq, CN9011Rsp, GetSystemTimeRsp, CN9012Rsp>(clientId, new GetSystemTimeReq(mn, pw, st, polId), timeOut);
             return Rsp2.ToList()[0].GetResult().SystemTime;
@@ -132,14 +132,14 @@ namespace HJ212_Server
 
         #region c3
         /// <inheritdoc/>
-        public async Task SetSystemTimeAsync(int clientId, string mn, string pw, ST st, string polId, DateTime systemTime, int timeOut = 5000)
+        public async Task SetSystemTimeAsync(Guid clientId, string mn, string pw, ST st, string polId, DateTime systemTime, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<SetSystemTimeReq, CN9011Rsp, CN9012Rsp>(clientId, new SetSystemTimeReq(mn, pw, st, polId, systemTime), timeOut);
         }
         #endregion
 
         #region c4
-        private async Task AskSetSystemTimeRspEvent(int clientId, (string PolId, RspInfo RspInfo) rs)
+        private async Task AskSetSystemTimeRspEvent(Guid clientId, (string PolId, RspInfo RspInfo) rs)
         {
             if (OnAskSetSystemTime is not null)
             {
@@ -151,7 +151,7 @@ namespace HJ212_Server
 
         #region c5
         /// <inheritdoc/>
-        public async Task<int> GetRealTimeDataIntervalAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
+        public async Task<int> GetRealTimeDataIntervalAsync(Guid clientId, string mn, string pw, ST st, int timeOut = 5000)
         {
             var (_, Rsp2, _) = await _condorPort.RequestAsync<GetReq, CN9011Rsp, GetRealTimeDataIntervalRsp, CN9012Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.提取实时数据间隔), timeOut);
             return Rsp2.ToList()[0].GetResult().RtdInterval;
@@ -160,7 +160,7 @@ namespace HJ212_Server
 
         #region c6
         /// <inheritdoc/>
-        public async Task SetRealTimeDataIntervalAsync(int clientId, string mn, string pw, ST st, int interval, int timeOut = 5000)
+        public async Task SetRealTimeDataIntervalAsync(Guid clientId, string mn, string pw, ST st, int interval, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<SetRealTimeDataIntervalReq, CN9011Rsp, CN9012Rsp>(clientId, new SetRealTimeDataIntervalReq(mn, pw, st, interval), timeOut);
         }
@@ -168,7 +168,7 @@ namespace HJ212_Server
 
         #region c7
         /// <inheritdoc/>
-        public async Task<int> GetMinuteDataIntervalAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
+        public async Task<int> GetMinuteDataIntervalAsync(Guid clientId, string mn, string pw, ST st, int timeOut = 5000)
         {
             var (_, Rsp2, _) = await _condorPort.RequestAsync<GetReq, CN9011Rsp, GetMinuteDataIntervalRsp, CN9012Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.提取分钟数据间隔), timeOut);
             return Rsp2.ToList()[0].GetResult().MinInterval;
@@ -177,7 +177,7 @@ namespace HJ212_Server
 
         #region c8
         /// <inheritdoc/>
-        public async Task SetMinuteDataIntervalAsync(int clientId, string mn, string pw, ST st, int interval, int timeOut = 5000)
+        public async Task SetMinuteDataIntervalAsync(Guid clientId, string mn, string pw, ST st, int interval, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<SetMinuteDataIntervalReq, CN9011Rsp, CN9012Rsp>(clientId, new SetMinuteDataIntervalReq(mn, pw, st, interval), timeOut);
         }
@@ -185,7 +185,7 @@ namespace HJ212_Server
 
         #region c9
         /// <inheritdoc/>
-        public async Task SetNewPWAsync(int clientId, string mn, string pw, ST st, string newPW, int timeOut = 5000)
+        public async Task SetNewPWAsync(Guid clientId, string mn, string pw, ST st, string newPW, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<SetNewPWReq, CN9011Rsp, CN9012Rsp>(clientId, new SetNewPWReq(mn, pw, st, newPW), timeOut);
         }
@@ -193,7 +193,7 @@ namespace HJ212_Server
 
         #region c10
         /// <inheritdoc/>
-        public async Task StartRealTimeDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
+        public async Task StartRealTimeDataAsync(Guid clientId, string mn, string pw, ST st, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<GetReq, CN9011Rsp, CN9012Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.取污染物实时数据), timeOut);
         }
@@ -201,7 +201,7 @@ namespace HJ212_Server
 
         #region c11
         /// <inheritdoc/>
-        public async Task StopRealTimeDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
+        public async Task StopRealTimeDataAsync(Guid clientId, string mn, string pw, ST st, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<GetReq, CN9013Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.停止察看污染物实时数据), timeOut);
         }
@@ -209,7 +209,7 @@ namespace HJ212_Server
 
         #region c12
         /// <inheritdoc/>
-        public async Task StartRunningStateDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
+        public async Task StartRunningStateDataAsync(Guid clientId, string mn, string pw, ST st, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<GetReq, CN9011Rsp, CN9012Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.取设备运行状态数据), timeOut);
         }
@@ -217,14 +217,14 @@ namespace HJ212_Server
 
         #region c13
         /// <inheritdoc/>
-        public async Task StopRunningStateDataAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
+        public async Task StopRunningStateDataAsync(Guid clientId, string mn, string pw, ST st, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<GetReq, CN9013Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.停止察看设备运行状态), timeOut);
         }
         #endregion
 
         #region c14、c25
-        private async Task UploadRealTimeDataRspEvent(int clientId, (DateTime DataTime, List<RealTimeData> Data, RspInfo RspInfo) rs)
+        private async Task UploadRealTimeDataRspEvent(Guid clientId, (DateTime DataTime, List<RealTimeData> Data, RspInfo RspInfo) rs)
         {
             if (OnUploadRealTimeData is not null)
             {
@@ -236,7 +236,7 @@ namespace HJ212_Server
         #endregion
 
         #region c15
-        private async Task UploadRunningStateDataRspEvent(int clientId, (DateTime DataTime, List<RunningStateData> Data, RspInfo RspInfo) rs)
+        private async Task UploadRunningStateDataRspEvent(Guid clientId, (DateTime DataTime, List<RunningStateData> Data, RspInfo RspInfo) rs)
         {
             if (OnUploadRunningStateData is not null)
             {
@@ -248,7 +248,7 @@ namespace HJ212_Server
         #endregion
 
         #region c16、c26
-        private async Task UploadMinuteDataRspEvent(int clientId, (DateTime DataTime, List<StatisticsData> Data, RspInfo RspInfo) rs)
+        private async Task UploadMinuteDataRspEvent(Guid clientId, (DateTime DataTime, List<StatisticsData> Data, RspInfo RspInfo) rs)
         {
             if (OnUploadMinuteData is not null)
             {
@@ -260,7 +260,7 @@ namespace HJ212_Server
         #endregion
 
         #region c17、c27
-        private async Task UploadHourDataRspEvent(int clientId, (DateTime DataTime, List<StatisticsData> Data, RspInfo RspInfo) rs)
+        private async Task UploadHourDataRspEvent(Guid clientId, (DateTime DataTime, List<StatisticsData> Data, RspInfo RspInfo) rs)
         {
             if (OnUploadHourData is not null)
             {
@@ -272,7 +272,7 @@ namespace HJ212_Server
         #endregion
 
         #region c18、c28
-        private async Task UploadDayDataRspEvent(int clientId, (DateTime DataTime, List<StatisticsData> Data, RspInfo RspInfo) rs)
+        private async Task UploadDayDataRspEvent(Guid clientId, (DateTime DataTime, List<StatisticsData> Data, RspInfo RspInfo) rs)
         {
             if (OnUploadDayData is not null)
             {
@@ -284,7 +284,7 @@ namespace HJ212_Server
         #endregion
 
         #region c19
-        private async Task UploadRunningTimeDataRspEvent(int clientId, (DateTime DataTime, List<RunningTimeData> Data, RspInfo RspInfo) rs)
+        private async Task UploadRunningTimeDataRspEvent(Guid clientId, (DateTime DataTime, List<RunningTimeData> Data, RspInfo RspInfo) rs)
         {
             if (OnUploadRunningTimeData is not null)
             {
@@ -297,7 +297,7 @@ namespace HJ212_Server
 
         #region c20
         /// <inheritdoc/>
-        public async Task<List<HistoryData>> GetMinuteDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000)
+        public async Task<List<HistoryData>> GetMinuteDataAsync(Guid clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000)
         {
             var (_, Rsp2, _) = await _condorPort.RequestAsync<GetStatisticsDataReq, CN9011Rsp, UploadMinuteDataRsp, CN9012Rsp>(clientId, new GetStatisticsDataReq(mn, pw, st, CN_Server.取污染物分钟数据, beginTime, endTime), timeOut);
             var rs = new List<HistoryData>();
@@ -312,7 +312,7 @@ namespace HJ212_Server
 
         #region c21
         /// <inheritdoc/>
-        public async Task<List<HistoryData>> GetHourDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000)
+        public async Task<List<HistoryData>> GetHourDataAsync(Guid clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000)
         {
             var (_, Rsp2, _) = await _condorPort.RequestAsync<GetStatisticsDataReq, CN9011Rsp, UploadHourDataRsp, CN9012Rsp>(clientId, new GetStatisticsDataReq(mn, pw, st, CN_Server.取污染物小时数据, beginTime, endTime), timeOut);
             var rs = new List<HistoryData>();
@@ -327,7 +327,7 @@ namespace HJ212_Server
 
         #region c22
         /// <inheritdoc/>
-        public async Task<List<HistoryData>> GetDayDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000)
+        public async Task<List<HistoryData>> GetDayDataAsync(Guid clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000)
         {
             var (_, Rsp2, _) = await _condorPort.RequestAsync<GetStatisticsDataReq, CN9011Rsp, UploadDayDataRsp, CN9012Rsp>(clientId, new GetStatisticsDataReq(mn, pw, st, CN_Server.取污染物日历史数据, beginTime, endTime), timeOut);
             var rs = new List<HistoryData>();
@@ -342,7 +342,7 @@ namespace HJ212_Server
 
         #region c23
         /// <inheritdoc/>
-        public async Task<List<RunningTimeHistory>> GetRunningTimeDataAsync(int clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000)
+        public async Task<List<RunningTimeHistory>> GetRunningTimeDataAsync(Guid clientId, string mn, string pw, ST st, DateTime beginTime, DateTime endTime, int timeOut = 5000)
         {
             var (_, Rsp2, _) = await _condorPort.RequestAsync<GetRunningTimeDataReq, CN9011Rsp, UploadRunningTimeDataRsp, CN9012Rsp>(clientId, new GetRunningTimeDataReq(mn, pw, st, beginTime, endTime), timeOut);
             var rs = new List<RunningTimeHistory>();
@@ -356,7 +356,7 @@ namespace HJ212_Server
         #endregion
 
         #region c24
-        private async Task UploadAcquisitionDeviceRestartTimeRspEvent(int clientId, (DateTime dataTime, DateTime restartTime, RspInfo RspInfo) rs)
+        private async Task UploadAcquisitionDeviceRestartTimeRspEvent(Guid clientId, (DateTime dataTime, DateTime restartTime, RspInfo RspInfo) rs)
         {
             if (OnUploadAcquisitionDeviceRestartTime is not null)
             {
@@ -369,7 +369,7 @@ namespace HJ212_Server
 
         #region c30
         /// <inheritdoc/>
-        public async Task CalibrateAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        public async Task CalibrateAsync(Guid clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<CalibrateReq, CN9011Rsp, CN9012Rsp>(clientId, new CalibrateReq(mn, pw, st, polId), timeOut);
         }
@@ -377,7 +377,7 @@ namespace HJ212_Server
 
         #region c31
         /// <inheritdoc/>
-        public async Task RealTimeSamplingAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        public async Task RealTimeSamplingAsync(Guid clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<RealTimeSamplingReq, CN9011Rsp, CN9012Rsp>(clientId, new RealTimeSamplingReq(mn, pw, st, polId), timeOut);
         }
@@ -385,7 +385,7 @@ namespace HJ212_Server
 
         #region c32
         /// <inheritdoc/>
-        public async Task StartCleaningOrBlowbackAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        public async Task StartCleaningOrBlowbackAsync(Guid clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<StartCleaningOrBlowbackReq, CN9011Rsp, CN9012Rsp>(clientId, new StartCleaningOrBlowbackReq(mn, pw, st, polId), timeOut);
         }
@@ -393,7 +393,7 @@ namespace HJ212_Server
 
         #region c33
         /// <inheritdoc/>
-        public async Task ComparisonSamplingAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        public async Task ComparisonSamplingAsync(Guid clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<ComparisonSamplingReq, CN9011Rsp, CN9012Rsp>(clientId, new ComparisonSamplingReq(mn, pw, st, polId), timeOut);
         }
@@ -401,7 +401,7 @@ namespace HJ212_Server
 
         #region c34
         /// <inheritdoc/>
-        public async Task<(DateTime DataTime, string VaseNo)> OutOfStandardRetentionSampleAsync(int clientId, string mn, string pw, ST st, int timeOut = 5000)
+        public async Task<(DateTime DataTime, string VaseNo)> OutOfStandardRetentionSampleAsync(Guid clientId, string mn, string pw, ST st, int timeOut = 5000)
         {
             var (_, Rsp2, _) = await _condorPort.RequestAsync<GetReq, CN9011Rsp, OutOfStandardRetentionSampleRsp, CN9012Rsp>(clientId, new GetReq(mn, pw, st, CN_Server.超标留样), timeOut);
             var rs2 = Rsp2.ToList()[0].GetResult();
@@ -411,7 +411,7 @@ namespace HJ212_Server
 
         #region c35
         /// <inheritdoc/>
-        public async Task SetSamplingPeriodAsync(int clientId, string mn, string pw, ST st, string polId, TimeOnly cstartTime, int ctime, int timeOut = 5000)
+        public async Task SetSamplingPeriodAsync(Guid clientId, string mn, string pw, ST st, string polId, TimeOnly cstartTime, int ctime, int timeOut = 5000)
         {
             await _condorPort.RequestAsync<SetSamplingPeriodReq, CN9011Rsp, CN9012Rsp>(clientId, new SetSamplingPeriodReq(mn, pw, st, polId, cstartTime, ctime), timeOut);
         }
@@ -419,7 +419,7 @@ namespace HJ212_Server
 
         #region c36
         /// <inheritdoc/>
-        public async Task<(TimeOnly CstartTime, int CTime)> GetSamplingPeriodAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        public async Task<(TimeOnly CstartTime, int CTime)> GetSamplingPeriodAsync(Guid clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
         {
             var (_, Rsp2, _) = await _condorPort.RequestAsync<GetSamplingPeriodReq, CN9011Rsp, GetSamplingPeriodRsp, CN9012Rsp>(clientId, new GetSamplingPeriodReq(mn, pw, st, polId), timeOut);
             var rs2 = Rsp2.ToList()[0].GetResult();
@@ -429,7 +429,7 @@ namespace HJ212_Server
 
         #region c37
         /// <inheritdoc/>
-        public async Task<int> GetSampleExtractionTimeAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        public async Task<int> GetSampleExtractionTimeAsync(Guid clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
         {
             var (_, Rsp2, _) = await _condorPort.RequestAsync<GetSampleExtractionTimeReq, CN9011Rsp, GetSampleExtractionTimeRsp, CN9012Rsp>(clientId, new GetSampleExtractionTimeReq(mn, pw, st, polId), timeOut);
             var rs2 = Rsp2.ToList()[0].GetResult();
@@ -439,7 +439,7 @@ namespace HJ212_Server
 
         #region c38
         /// <inheritdoc/>
-        public async Task<string> GetSNAsync(int clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        public async Task<string> GetSNAsync(Guid clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
         {
             var (_, Rsp2, _) = await _condorPort.RequestAsync<GetSNReq, CN9011Rsp, GetSNRsp, CN9012Rsp>(clientId, new GetSNReq(mn, pw, st, polId), timeOut);
             var rs2 = Rsp2.ToList()[0].GetResult();
@@ -448,7 +448,7 @@ namespace HJ212_Server
         #endregion
 
         #region c39
-        private async Task UploadSNRspEvent(int clientId, (DateTime DataTime, string PolId, string SN, RspInfo RspInfo) rs)
+        private async Task UploadSNRspEvent(Guid clientId, (DateTime DataTime, string PolId, string SN, RspInfo RspInfo) rs)
         {
             if (OnUploadSN is not null)
             {
@@ -460,7 +460,7 @@ namespace HJ212_Server
         #endregion
 
         #region c40
-        private async Task UploadLogRspEvent(int clientId, (DateTime DataTime, string? PolId, string Log, RspInfo RspInfo) rs)
+        private async Task UploadLogRspEvent(Guid clientId, (DateTime DataTime, string? PolId, string Log, RspInfo RspInfo) rs)
         {
             if (OnUploadLog is not null)
             {
@@ -473,7 +473,7 @@ namespace HJ212_Server
 
         #region c41
         /// <inheritdoc/>
-        public async Task<List<LogInfo>> GetLogInfosAsync(int clientId, string mn, string pw, ST st, string? polId, DateTime beginTime, DateTime endTime, int timeOut = 5000)
+        public async Task<List<LogInfo>> GetLogInfosAsync(Guid clientId, string mn, string pw, ST st, string? polId, DateTime beginTime, DateTime endTime, int timeOut = 5000)
         {
             var (_, Rsp2, _) = await _condorPort.RequestAsync<GetLogInfosReq, CN9011Rsp, UploadLogRsp, CN9012Rsp>(clientId, new GetLogInfosReq(mn, pw, st, polId, beginTime, endTime), timeOut);
             var rs = new List<LogInfo>();
@@ -487,7 +487,7 @@ namespace HJ212_Server
         #endregion
 
         #region c42
-        private async Task UploadInfoRspEvent(int clientId, (DateTime DataTime, string PolId, List<DeviceInfo> DeviceInfos, RspInfo RspInfo) rs)
+        private async Task UploadInfoRspEvent(Guid clientId, (DateTime DataTime, string PolId, List<DeviceInfo> DeviceInfos, RspInfo RspInfo) rs)
         {
             if (OnUploadInfo is not null)
             {
@@ -500,27 +500,27 @@ namespace HJ212_Server
 
         #region c43
         /// <inheritdoc/>
-        public async Task<string> GetStateInfoAsync(int client, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        public async Task<string> GetStateInfoAsync(Guid clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
         {
-            var (_, Rsp2, _) = await _condorPort.RequestAsync<GetInfoReq, CN9011Rsp, UploadInfoRsp, CN9012Rsp>(client, new GetInfoReq(mn, pw, st, polId, "i12001"), timeOut);
+            var (_, Rsp2, _) = await _condorPort.RequestAsync<GetInfoReq, CN9011Rsp, UploadInfoRsp, CN9012Rsp>(clientId, new GetInfoReq(mn, pw, st, polId, "i12001"), timeOut);
             return Rsp2.ToList()[0].GetResult().DeviceInfos[0].Info;
         }
         #endregion
 
         #region c45
         /// <inheritdoc/>
-        public async Task<string> GetArgumentInfoAsync(int client, string mn, string pw, ST st, string polId, int timeOut = 5000)
+        public async Task<string> GetArgumentInfoAsync(Guid clientId, string mn, string pw, ST st, string polId, int timeOut = 5000)
         {
-            var (_, Rsp2, _) = await _condorPort.RequestAsync<GetInfoReq, CN9011Rsp, UploadInfoRsp, CN9012Rsp>(client, new GetInfoReq(mn, pw, st, polId, "i13004"), timeOut);
+            var (_, Rsp2, _) = await _condorPort.RequestAsync<GetInfoReq, CN9011Rsp, UploadInfoRsp, CN9012Rsp>(clientId, new GetInfoReq(mn, pw, st, polId, "i13004"), timeOut);
             return Rsp2.ToList()[0].GetResult().DeviceInfos[0].Info;
         }
         #endregion
 
         #region c46
         /// <inheritdoc/>
-        public async Task SetInfoAsync(int client, string mn, string pw, ST st, string polId, string infoId, string info, int timeOut = 5000)
+        public async Task SetInfoAsync(Guid clientId, string mn, string pw, ST st, string polId, string infoId, string info, int timeOut = 5000)
         {
-            await _condorPort.RequestAsync<SetInfoReq, CN9011Rsp, CN9012Rsp>(client, new SetInfoReq(mn, pw, st, polId, infoId, info), timeOut);
+            await _condorPort.RequestAsync<SetInfoReq, CN9011Rsp, CN9012Rsp>(clientId, new SetInfoReq(mn, pw, st, polId, infoId, info), timeOut);
         }
         #endregion
 #pragma warning restore IDE0051 // 删除未使用的私有成员
