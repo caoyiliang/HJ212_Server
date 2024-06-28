@@ -143,8 +143,15 @@ namespace HJ212_Server
         {
             if (OnAskSetSystemTime is not null)
             {
-                await _condorPort.SendAsync(clientId, new ResponseReq(rs.RspInfo));
-                await OnAskSetSystemTime.Invoke(clientId, rs);
+                foreach (var item in OnAskSetSystemTime.GetInvocationList())
+                {
+                    if (item.Method.DeclaringType!.GetProperty("ClientId")!.GetValue(item.Target)!.ToString() == clientId.ToString())
+                    {
+                        await _condorPort.SendAsync(clientId, new ResponseReq(rs.RspInfo));
+                        await OnAskSetSystemTime.Invoke(clientId, rs);
+                        continue;
+                    }
+                }
             }
         }
         #endregion
@@ -228,9 +235,16 @@ namespace HJ212_Server
         {
             if (OnUploadRealTimeData is not null)
             {
-                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
-                await OnUploadRealTimeData.Invoke(clientId, rs);
+                foreach (var item in OnUploadRealTimeData.GetInvocationList())
+                {
+                    if (item.Method.DeclaringType!.GetProperty("ClientId")!.GetValue(item.Target)!.ToString() == clientId.ToString())
+                    {
+                        if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                            await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+                        await OnUploadRealTimeData.Invoke(clientId, rs);
+                        continue;
+                    }
+                }
             }
         }
         #endregion
@@ -240,9 +254,16 @@ namespace HJ212_Server
         {
             if (OnUploadRunningStateData is not null)
             {
-                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
-                await OnUploadRunningStateData.Invoke(clientId, rs);
+                foreach (var item in OnUploadRunningStateData.GetInvocationList())
+                {
+                    if (item.Method.DeclaringType!.GetProperty("ClientId")!.GetValue(item.Target)!.ToString() == clientId.ToString())
+                    {
+                        if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                            await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+                        await OnUploadRunningStateData.Invoke(clientId, rs);
+                        continue;
+                    }
+                }
             }
         }
         #endregion
@@ -252,9 +273,16 @@ namespace HJ212_Server
         {
             if (OnUploadMinuteData is not null)
             {
-                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
-                await OnUploadMinuteData.Invoke(clientId, rs);
+                foreach (var item in OnUploadMinuteData.GetInvocationList())
+                {
+                    if (item.Method.DeclaringType!.GetProperty("ClientId")!.GetValue(item.Target)!.ToString() == clientId.ToString())
+                    {
+                        if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                            await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+                        await OnUploadMinuteData.Invoke(clientId, rs);
+                        continue;
+                    }
+                }
             }
         }
         #endregion
@@ -264,9 +292,16 @@ namespace HJ212_Server
         {
             if (OnUploadHourData is not null)
             {
-                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
-                await OnUploadHourData.Invoke(clientId, rs);
+                foreach (var item in OnUploadHourData.GetInvocationList())
+                {
+                    if (item.Method.DeclaringType!.GetProperty("ClientId")!.GetValue(item.Target)!.ToString() == clientId.ToString())
+                    {
+                        if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                            await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+                        await OnUploadHourData.Invoke(clientId, rs);
+                        continue;
+                    }
+                }
             }
         }
         #endregion
@@ -276,9 +311,16 @@ namespace HJ212_Server
         {
             if (OnUploadDayData is not null)
             {
-                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
-                await OnUploadDayData.Invoke(clientId, rs);
+                foreach (var item in OnUploadDayData.GetInvocationList())
+                {
+                    if (item.Method.DeclaringType!.GetProperty("ClientId")!.GetValue(item.Target)!.ToString() == clientId.ToString())
+                    {
+                        if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                            await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+                        await OnUploadDayData.Invoke(clientId, rs);
+                        continue;
+                    }
+                }
             }
         }
         #endregion
@@ -288,9 +330,16 @@ namespace HJ212_Server
         {
             if (OnUploadRunningTimeData is not null)
             {
-                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
-                await OnUploadRunningTimeData.Invoke(clientId, rs);
+                foreach (var item in OnUploadRunningTimeData.GetInvocationList())
+                {
+                    if (item.Method.DeclaringType!.GetProperty("ClientId")!.GetValue(item.Target)!.ToString() == clientId.ToString())
+                    {
+                        if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                            await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+                        await OnUploadRunningTimeData.Invoke(clientId, rs);
+                        continue;
+                    }
+                }
             }
         }
         #endregion
@@ -360,9 +409,16 @@ namespace HJ212_Server
         {
             if (OnUploadAcquisitionDeviceRestartTime is not null)
             {
-                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
-                await OnUploadAcquisitionDeviceRestartTime.Invoke(clientId, rs);
+                foreach (var item in OnUploadAcquisitionDeviceRestartTime.GetInvocationList())
+                {
+                    if (item.Method.DeclaringType!.GetProperty("ClientId")!.GetValue(item.Target)!.ToString() == clientId.ToString())
+                    {
+                        if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                            await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+                        await OnUploadAcquisitionDeviceRestartTime.Invoke(clientId, rs);
+                        continue;
+                    }
+                }
             }
         }
         #endregion
@@ -452,9 +508,16 @@ namespace HJ212_Server
         {
             if (OnUploadSN is not null)
             {
-                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
-                await OnUploadSN.Invoke(clientId, rs);
+                foreach (var item in OnUploadSN.GetInvocationList())
+                {
+                    if (item.Method.DeclaringType!.GetProperty("ClientId")!.GetValue(item.Target)!.ToString() == clientId.ToString())
+                    {
+                        if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                            await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+                        await OnUploadSN.Invoke(clientId, rs);
+                        continue;
+                    }
+                }
             }
         }
         #endregion
@@ -464,9 +527,16 @@ namespace HJ212_Server
         {
             if (OnUploadLog is not null)
             {
-                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
-                await OnUploadLog.Invoke(clientId, rs);
+                foreach (var item in OnUploadLog.GetInvocationList())
+                {
+                    if (item.Method.DeclaringType!.GetProperty("ClientId")!.GetValue(item.Target)!.ToString() == clientId.ToString())
+                    {
+                        if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                            await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+                        await OnUploadLog.Invoke(clientId, rs);
+                        continue;
+                    }
+                }
             }
         }
         #endregion
@@ -491,9 +561,16 @@ namespace HJ212_Server
         {
             if (OnUploadInfo is not null)
             {
-                if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
-                    await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
-                await OnUploadInfo.Invoke(clientId, rs);
+                foreach (var item in OnUploadInfo.GetInvocationList())
+                {
+                    if (item.Method.DeclaringType!.GetProperty("ClientId")!.GetValue(item.Target)!.ToString() == clientId.ToString())
+                    {
+                        if (!rs.RspInfo.Flag.HasValue || NeedReturn(rs.RspInfo.Flag))
+                            await _condorPort.SendAsync(clientId, new DataReq(rs.RspInfo));
+                        await OnUploadInfo.Invoke(clientId, rs);
+                        continue;
+                    }
+                }
             }
         }
         #endregion

@@ -6,6 +6,7 @@ namespace HJ212_Server
 {
     /// <summary>
     /// 国标服务端
+    /// 注意：监听类须带属性ClientId
     /// </summary>
     public interface IGB_Server : IProtocol_Server
     {
