@@ -7,7 +7,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>CSoft.Protocol.HJ212_Server</PackageId>
-    <Version>9.1.1</Version>
+    <Version>9.1.2</Version>
     <Authors>CSoft</Authors>
     <Description>HJ212服务端</Description>
     <PackageIcon>logo.png</PackageIcon>
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="9.3.0" />
+    <PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="9.3.1" />
   </ItemGroup>
 
 </Project>
